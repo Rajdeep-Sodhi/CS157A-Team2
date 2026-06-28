@@ -1,0 +1,20 @@
+# Java compiled output
+*.class
+*.jar
+*.war
+
+# IDE folders
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IMPORTANT: never commit your DB password
+# If you put your password in DBConnection.java, add it here:
+# src/main/java/dao/DBConnection.java
