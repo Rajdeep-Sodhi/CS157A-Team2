@@ -46,9 +46,22 @@ INSERT INTO GroupStandings (team_id, wins, draws, losses, goal_diff, points) VAL
 (7, 0, 0, 0,  0, 0),
 (8, 0, 0, 0,  0, 0);
 
-INSERT INTO Users (name, email, password_hash, role) VALUES
-('Admin',    'admin@worldcup.com', 'changeme', 'admin'),
-('Test Fan', 'fan@worldcup.com',   'changeme', 'fan');
+INSERT INTO Users (user_id, name, email, password_hash, role) VALUES
+(1, 'Admin', 'admin@worldcup.com', 'changeme', 'admin'),
+(2, 'Test Fan', 'fan@worldcup.com', 'changeme', 'fan'),
+(3, 'John Smith', 'john.smith@email.com', 'changeme', 'fan'),
+(4, 'Emily Johnson', 'emily.johnson@email.com', 'changeme', 'fan'),
+(5, 'Michael Brown', 'michael.brown@email.com', 'changeme', 'fan'),
+(6, 'Sophia Davis', 'sophia.davis@email.com', 'changeme', 'fan'),
+(7, 'Daniel Wilson', 'daniel.wilson@email.com', 'changeme', 'fan'),
+(8, 'Olivia Martinez', 'olivia.martinez@email.com', 'changeme', 'fan'),
+(9, 'James Anderson', 'james.anderson@email.com', 'changeme', 'fan'),
+(10, 'Emma Thomas', 'emma.thomas@email.com', 'changeme', 'fan'),
+(11, 'William Taylor', 'william.taylor@email.com', 'changeme', 'fan'),
+(12, 'Isabella Moore', 'isabella.moore@email.com', 'changeme', 'fan'),
+(13, 'Benjamin Jackson', 'ben.jackson@email.com', 'changeme', 'fan'),
+(14, 'Mia White', 'mia.white@email.com', 'changeme', 'fan'),
+(15, 'Lucas Harris', 'lucas.harris@email.com', 'changeme', 'fan');
 
 INSERT INTO Players (team_id, name, position, jersey_number, date_of_birth) VALUES
 (1, 'Christian Pulisic', 'Forward', 10, '1998-09-18'),
