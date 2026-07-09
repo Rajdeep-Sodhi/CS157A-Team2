@@ -1,3 +1,4 @@
+
 -- ================================================
 -- FIFA World Cup 2026 - CS157A Team 2
 -- schema.sql: Run this FIRST in MySQL Workbench
@@ -60,3 +61,73 @@ CREATE TABLE Users (
     password_hash VARCHAR(255) NOT NULL,
     role          ENUM('guest','fan','admin') DEFAULT 'fan'
 );
+
+CREATE TABLE `Players` (
+  `player_id` int NOT NULL AUTO_INCREMENT,
+  `team_id` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `position` varchar(50) DEFAULT NULL,
+  `jersey_number` int DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  PRIMARY KEY (`player_id`),
+  KEY `players_teams_fk_idx` (`team_id`),
+  CONSTRAINT `players_teams_fk` FOREIGN KEY (`team_id`) REFERENCES `Teams` (`team_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `PlayerStats` (
+  `stat_id` int NOT NULL,
+  `player_id` int NOT NULL,
+  `goals` int DEFAULT NULL,
+  `assists` int DEFAULT NULL,
+  `minutes_played` int DEFAULT NULL,
+  PRIMARY KEY (`stat_id`),
+  KEY `playerstats_players_fk_idx` (`player_id`),
+  CONSTRAINT `playerstats_players_fk` FOREIGN KEY (`player_id`) REFERENCES `Players` (`player_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `Referees` (
+  `referee_id` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`referee_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `MatchResults` (
+  `result_id` int NOT NULL,
+  `match_id` int NOT NULL,
+  `team1_score` int DEFAULT NULL,
+  `team2_score` int DEFAULT NULL,
+  `winner_team_id` int DEFAULT NULL,
+  PRIMARY KEY (`result_id`),
+  KEY `matchresults_matches_fk_idx` (`match_id`),
+  KEY `matchresults_teams_fk_idx` (`winner_team_id`),
+  CONSTRAINT `matchresults_matches_fk` FOREIGN KEY (`match_id`) REFERENCES `Matches` (`match_id`),
+  CONSTRAINT `matchresults_teams_fk` FOREIGN KEY (`winner_team_id`) REFERENCES `Teams` (`team_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `MatchEvents` (
+  `event_id` int NOT NULL,
+  `match_id` int NOT NULL,
+  `player_id` int NOT NULL,
+  `event_type` varchar(100) DEFAULT NULL,
+  `minute` int DEFAULT NULL,
+  PRIMARY KEY (`event_id`),
+  KEY `matchevents_matches_fk_idx` (`match_id`),
+  KEY `matchevents_players_fk_idx` (`player_id`),
+  CONSTRAINT `matchevents_matches_fk` FOREIGN KEY (`match_id`) REFERENCES `Matches` (`match_id`),
+  CONSTRAINT `matchevents_players_fk` FOREIGN KEY (`player_id`) REFERENCES `Players` (`player_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `Predictions` (
+  `prediction_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `match_id` int NOT NULL,
+  `predicted_team1_score` int DEFAULT NULL,
+  `predicted_team2_score` int DEFAULT NULL,
+  PRIMARY KEY (`prediction_id`),
+  KEY `predictions_users_fk_idx` (`user_id`),
+  KEY `predictions_matches_fk_idx` (`match_id`),
+  CONSTRAINT `predictions_matches_fk` FOREIGN KEY (`match_id`) REFERENCES `Matches` (`match_id`),
+  CONSTRAINT `predictions_users_fk` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
