@@ -104,3 +104,16 @@ CREATE TABLE `MatchResults` (
   CONSTRAINT `matchresults_teams_fk` FOREIGN KEY (`winner_team_id`) REFERENCES `Teams` (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `MatchEvents` (
+  `event_id` int NOT NULL,
+  `match_id` int NOT NULL,
+  `player_id` int NOT NULL,
+  `event_type` varchar(100) DEFAULT NULL,
+  `minute` int DEFAULT NULL,
+  PRIMARY KEY (`event_id`),
+  KEY `matchevents_matches_fk_idx` (`match_id`),
+  KEY `matchevents_players_fk_idx` (`player_id`),
+  CONSTRAINT `matchevents_matches_fk` FOREIGN KEY (`match_id`) REFERENCES `Matches` (`match_id`),
+  CONSTRAINT `matchevents_players_fk` FOREIGN KEY (`player_id`) REFERENCES `Players` (`player_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+

@@ -96,11 +96,20 @@ INSERT INTO Referees (referee_id, name) VALUES
 (7, 'Facundo Tello'),
 (8, 'Jesus Valenzuela');
 
-INSERT INTO MatchResults
-(result_id, match_id, team1_score, team2_score, winner_team_id) VALUES
+INSERT INTO MatchResults (result_id, match_id, team1_score, team2_score, winner_team_id) VALUES
 (1, 1, 2, 0, 1),
 (2, 2, 1, 3, 4),
 (3, 3, 2, 2, NULL),
 (4, 4, 1, 0, 7),
 (5, 5, 2, 1, 1),
 (6, 6, 0, 2, 4);
+
+INSERT INTO MatchEvents (event_id, match_id, player_id, event_type, minute) VALUES
+(1, 1, 1, 'Goal', 18),
+(2, 1, 5, 'Yellow Card', 41),
+(3, 1, 2, 'Assist', 18),
+(4, 2, 10, 'Goal', 63),
+(5, 2, 11, 'Assist', 63),
+(6, 3, 14, 'Yellow Card', 29),
+(7, 4, 19, 'Goal', 74),
+(8, 6, 20, 'Red Card', 88);
