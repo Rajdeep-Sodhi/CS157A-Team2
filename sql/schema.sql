@@ -60,3 +60,15 @@ CREATE TABLE Users (
     password_hash VARCHAR(255) NOT NULL,
     role          ENUM('guest','fan','admin') DEFAULT 'fan'
 );
+
+CREATE TABLE `Players` (
+  `player_id` int NOT NULL AUTO_INCREMENT,
+  `team_id` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `position` varchar(50) DEFAULT NULL,
+  `jersey_number` int DEFAULT NULL,
+  `date_of_birth` date DEFAULT NULL,
+  PRIMARY KEY (`player_id`),
+  KEY `players_teams_fk_idx` (`team_id`),
+  CONSTRAINT `players_teams_fk` FOREIGN KEY (`team_id`) REFERENCES `Teams` (`team_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

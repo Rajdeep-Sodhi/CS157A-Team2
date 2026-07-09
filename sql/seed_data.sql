@@ -49,3 +49,29 @@ INSERT INTO GroupStandings (team_id, wins, draws, losses, goal_diff, points) VAL
 INSERT INTO Users (name, email, password_hash, role) VALUES
 ('Admin',    'admin@worldcup.com', 'changeme', 'admin'),
 ('Test Fan', 'fan@worldcup.com',   'changeme', 'fan');
+
+INSERT INTO Players (team_id, name, position, jersey_number, date_of_birth) VALUES
+(1, 'Christian Pulisic', 'Forward', 10, '1998-09-18'),
+(1, 'Weston McKennie', 'Midfielder', 8, '1998-08-28'),
+(1, 'Matt Turner', 'Goalkeeper', 1, '1994-06-24'),
+(2, 'Santiago Gimenez', 'Forward', 11, '2001-04-18'),
+(2, 'Edson Alvarez', 'Midfielder', 4, '1997-10-24'),
+(2, 'Luis Malagon', 'Goalkeeper', 1, '1997-03-02'),
+(3, 'Vinicius Junior', 'Forward', 7, '2000-07-12'),
+(3, 'Rodrygo', 'Forward', 10, '2001-01-09'),
+(3, 'Alisson Becker', 'Goalkeeper', 1, '1992-10-02'),
+(4, 'Lionel Messi', 'Forward', 10, '1987-06-24'),
+(4, 'Julian Alvarez', 'Forward', 9, '2000-01-31'),
+(4, 'Emiliano Martinez', 'Goalkeeper', 23, '1992-09-02'),
+(5, 'Kylian Mbappe', 'Forward', 10, '1998-12-20'),
+(5, 'Aurelien Tchouameni', 'Midfielder', 8, '2000-01-27'),
+(5, 'Mike Maignan', 'Goalkeeper', 16, '1995-07-03'),
+(6, 'Jamal Musiala', 'Midfielder', 10, '2003-02-26'),
+(6, 'Florian Wirtz', 'Midfielder', 17, '2003-05-03'),
+(6, 'Marc-Andre ter Stegen', 'Goalkeeper', 1, '1992-04-30'),
+(7, 'Harry Kane', 'Forward', 9, '1993-07-28'),
+(7, 'Jude Bellingham', 'Midfielder', 10, '2003-06-29'),
+(7, 'Jordan Pickford', 'Goalkeeper', 1, '1994-03-07'),
+(8, 'Lamine Yamal', 'Forward', 19, '2007-07-13'),
+(8, 'Pedri', 'Midfielder', 20, '2002-11-25'),
+(8, 'Unai Simon', 'Goalkeeper', 23, '1997-06-11');
