@@ -117,3 +117,17 @@ CREATE TABLE `MatchEvents` (
   CONSTRAINT `matchevents_players_fk` FOREIGN KEY (`player_id`) REFERENCES `Players` (`player_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `Predictions` (
+  `prediction_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `match_id` int NOT NULL,
+  `predicted_team1_score` int DEFAULT NULL,
+  `predicted_team2_score` int DEFAULT NULL,
+  PRIMARY KEY (`prediction_id`),
+  KEY `predictions_users_fk_idx` (`user_id`),
+  KEY `predictions_matches_fk_idx` (`match_id`),
+  CONSTRAINT `predictions_matches_fk` FOREIGN KEY (`match_id`) REFERENCES `Matches` (`match_id`),
+  CONSTRAINT `predictions_users_fk` FOREIGN KEY (`user_id`) REFERENCES `Users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+

@@ -113,3 +113,15 @@ INSERT INTO MatchEvents (event_id, match_id, player_id, event_type, minute) VALU
 (6, 3, 14, 'Yellow Card', 29),
 (7, 4, 19, 'Goal', 74),
 (8, 6, 20, 'Red Card', 88);
+
+INSERT INTO Predictions (prediction_id, user_id, match_id, predicted_team1_score, predicted_team2_score) VALUES
+(1, 1, 1, 2, 1),
+(2, 2, 1, 1, 1),
+(3, 1, 2, 1, 2),
+(4, 2, 2, 0, 2),
+(5, 1, 3, 2, 1),
+(6, 2, 3, 1, 1),
+(7, 1, 4, 1, 0),
+(8, 2, 4, 2, 2),
+(9, 1, 5, 3, 2),
+(10, 2, 5, 1, 0);
