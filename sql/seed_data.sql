@@ -125,3 +125,15 @@ INSERT INTO Predictions (prediction_id, user_id, match_id, predicted_team1_score
 (8, 2, 4, 2, 2),
 (9, 1, 5, 3, 2),
 (10, 2, 5, 1, 0);
+
+INSERT INTO Sponsors (sponsor_id, sponsor_name, contract_amount) VALUES
+(1, 'Adidas', 5000000),
+(2, 'Coca Cola', 4500000),
+(3, 'Nike', 4000000),
+(4, 'Hyundai', 3800000),
+(5, 'Qatar Airways', 4200000),
+(6, 'Lenovo', 3000000),
+(7, 'Aramco', 5500000),
+(8, 'Hisense', 2500000),
+(9, 'Bank of America', 2000000),
+(10, 'AB InBev', 1000000);
