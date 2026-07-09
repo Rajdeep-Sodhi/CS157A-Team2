@@ -95,3 +95,12 @@ INSERT INTO Referees (referee_id, name) VALUES
 (6, 'Daniele Orsato'),
 (7, 'Facundo Tello'),
 (8, 'Jesus Valenzuela');
+
+INSERT INTO MatchResults
+(result_id, match_id, team1_score, team2_score, winner_team_id) VALUES
+(1, 1, 2, 0, 1),
+(2, 2, 1, 3, 4),
+(3, 3, 2, 2, NULL),
+(4, 4, 1, 0, 7),
+(5, 5, 2, 1, 1),
+(6, 6, 0, 2, 4);

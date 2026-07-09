@@ -91,3 +91,16 @@ CREATE TABLE `Referees` (
   PRIMARY KEY (`referee_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `MatchResults` (
+  `result_id` int NOT NULL,
+  `match_id` int NOT NULL,
+  `team1_score` int DEFAULT NULL,
+  `team2_score` int DEFAULT NULL,
+  `winner_team_id` int DEFAULT NULL,
+  PRIMARY KEY (`result_id`),
+  KEY `matchresults_matches_fk_idx` (`match_id`),
+  KEY `matchresults_teams_fk_idx` (`winner_team_id`),
+  CONSTRAINT `matchresults_matches_fk` FOREIGN KEY (`match_id`) REFERENCES `Matches` (`match_id`),
+  CONSTRAINT `matchresults_teams_fk` FOREIGN KEY (`winner_team_id`) REFERENCES `Teams` (`team_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
