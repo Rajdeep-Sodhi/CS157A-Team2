@@ -1,3 +1,4 @@
+
 -- ================================================
 -- FIFA World Cup 2026 - CS157A Team 2
 -- schema.sql: Run this FIRST in MySQL Workbench
@@ -72,3 +73,14 @@ CREATE TABLE `Players` (
   KEY `players_teams_fk_idx` (`team_id`),
   CONSTRAINT `players_teams_fk` FOREIGN KEY (`team_id`) REFERENCES `Teams` (`team_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `PlayerStats` (
+  `stat_id` int NOT NULL,
+  `player_id` int NOT NULL,
+  `goals` int DEFAULT NULL,
+  `assists` int DEFAULT NULL,
+  `minutes_played` int DEFAULT NULL,
+  PRIMARY KEY (`stat_id`),
+  KEY `playerstats_players_fk_idx` (`player_id`),
+  CONSTRAINT `playerstats_players_fk` FOREIGN KEY (`player_id`) REFERENCES `Players` (`player_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -75,3 +75,13 @@ INSERT INTO Players (team_id, name, position, jersey_number, date_of_birth) VALU
 (8, 'Lamine Yamal', 'Forward', 19, '2007-07-13'),
 (8, 'Pedri', 'Midfielder', 20, '2002-11-25'),
 (8, 'Unai Simon', 'Goalkeeper', 23, '1997-06-11');
+
+INSERT INTO PlayerStats (stat_id, player_id, goals, assists, minutes_played) VALUES
+(1, 1, 2, 1, 178),
+(2, 4, 1, 0, 165),
+(3, 7, 0, 2, 142),
+(4, 10, 3, 1, 180),
+(5, 13, 1, 1, 157),
+(6, 16, 0, 0, 83),
+(7, 19, 2, 0, 174),
+(8, 22, 1, 0, 120);
