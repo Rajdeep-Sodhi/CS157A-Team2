@@ -107,8 +107,8 @@ INSERT INTO Referees (referee_id, name) VALUES
 (5, 'Danny Makkelie'),
 (6, 'Daniele Orsato'),
 (7, 'Facundo Tello'),
-(8, 'Jesus Valenzuela');
-(9, 'Szymon Marciniak');
+(8, 'Jesus Valenzuela'),
+(9, 'Szymon Marciniak'),
 (10, 'Michael Oliver');
 
 INSERT INTO MatchResults (result_id, match_id, team1_score, team2_score, winner_team_id) VALUES
