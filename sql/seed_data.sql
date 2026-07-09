@@ -117,7 +117,11 @@ INSERT INTO MatchResults (result_id, match_id, team1_score, team2_score, winner_
 (3, 3, 2, 2, NULL),
 (4, 4, 1, 0, 7),
 (5, 5, 2, 1, 1),
-(6, 6, 0, 2, 4);
+(6, 6, 0, 2, 4),
+(7, 7, 3, 1, 5),
+(8, 8, 1, 1, NULL),
+(9, 9, 2, 0, 3),
+(10, 10, 0, 1, 8);
 
 INSERT INTO MatchEvents (event_id, match_id, player_id, event_type, minute) VALUES
 (1, 1, 1, 'Goal', 18),
