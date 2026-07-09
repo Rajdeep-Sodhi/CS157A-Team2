@@ -10,7 +10,9 @@ INSERT INTO Countries (country_name, fifa_ranking, confederation) VALUES
 ('France',     2, 'UEFA'),
 ('Germany',   12, 'UEFA'),
 ('England',    4, 'UEFA'),
-('Spain',      7, 'UEFA');
+('Spain',      7, 'UEFA'),
+('Netherlands', 6, 'UEFA'),
+('Portugal',    8, 'UEFA');
 
 INSERT INTO Teams (country_id, group_letter, coach_name) VALUES
 (1, 'A', 'Mauricio Pochettino'),
@@ -20,13 +22,21 @@ INSERT INTO Teams (country_id, group_letter, coach_name) VALUES
 (5, 'C', 'Didier Deschamps'),
 (6, 'C', 'Julian Nagelsmann'),
 (7, 'D', 'Gareth Southgate'),
-(8, 'D', 'Luis de la Fuente');
+(8, 'D', 'Luis de la Fuente'),
+(9,  'A', 'Ronald Koeman'),
+(10, 'B', 'Roberto Martinez');
 
 INSERT INTO Venues (stadium_name, city, host_country, capacity) VALUES
 ('MetLife Stadium',  'New York',     'USA',    82500),
 ('SoFi Stadium',     'Los Angeles',  'USA',    70240),
 ('Estadio Azteca',   'Mexico City',  'Mexico', 87523),
-('BC Place',         'Vancouver',    'Canada', 54500);
+('BC Place',         'Vancouver',    'Canada', 54500),
+('AT&T Stadium',           'Arlington',     'USA',    80000),
+('Mercedes-Benz Stadium',  'Atlanta',       'USA',    71000),
+('Hard Rock Stadium',      'Miami Gardens', 'USA',    64767),
+('Lincoln Financial Field','Philadelphia',  'USA',    69796),
+('Levi''s Stadium',        'Santa Clara',   'USA',    68500),
+('Estadio BBVA',           'Monterrey',     'Mexico', 53500);
 
 INSERT INTO Matches (team1_id, team2_id, venue_id, match_date, stage, team1_score, team2_score) VALUES
 (1, 2, 1, '2026-06-11 18:00:00', 'Group A', 2, 0),
@@ -34,7 +44,13 @@ INSERT INTO Matches (team1_id, team2_id, venue_id, match_date, stage, team1_scor
 (5, 6, 3, '2026-06-13 18:00:00', 'Group C', NULL, NULL),
 (7, 8, 4, '2026-06-14 18:00:00', 'Group D', NULL, NULL),
 (1, 3, 1, '2026-06-18 18:00:00', 'Group A', NULL, NULL),
-(2, 4, 2, '2026-06-19 18:00:00', 'Group B', NULL, NULL);
+(2, 4, 2, '2026-06-19 18:00:00', 'Group B', NULL, NULL),
+(1, 9,  5, '2026-06-20 18:00:00', 'Group A',     3, 1),  
+(2, 9,  6, '2026-06-21 18:00:00', 'Group A',     1, 1),     
+(3, 10, 7, '2026-06-20 18:00:00', 'Group B',     2, 2),     
+(4, 10, 8, '2026-06-21 18:00:00', 'Group B',     2, 0),     
+(5, 7,  9, '2026-06-22 18:00:00', 'Round of 16', NULL, NULL), -- upcoming
+(6, 8, 10, '2026-06-22 18:00:00', 'Round of 16', NULL, NULL); -- upcoming
 
 INSERT INTO GroupStandings (team_id, wins, draws, losses, goal_diff, points) VALUES
 (1, 1, 0, 0,  2, 3),
@@ -44,7 +60,9 @@ INSERT INTO GroupStandings (team_id, wins, draws, losses, goal_diff, points) VAL
 (5, 0, 0, 0,  0, 0),
 (6, 0, 0, 0,  0, 0),
 (7, 0, 0, 0,  0, 0),
-(8, 0, 0, 0,  0, 0);
+(8, 0, 0, 0,  0, 0),
+(9,  0, 1, 1, -2, 1),
+(10, 0, 1, 1, -2, 1);
 
 INSERT INTO Users (user_id, name, email, password_hash, role) VALUES
 (1, 'Admin', 'admin@worldcup.com', 'changeme', 'admin'),
@@ -87,7 +105,13 @@ INSERT INTO Players (team_id, name, position, jersey_number, date_of_birth) VALU
 (7, 'Jordan Pickford', 'Goalkeeper', 1, '1994-03-07'),
 (8, 'Lamine Yamal', 'Forward', 19, '2007-07-13'),
 (8, 'Pedri', 'Midfielder', 20, '2002-11-25'),
-(8, 'Unai Simon', 'Goalkeeper', 23, '1997-06-11');
+(8, 'Unai Simon', 'Goalkeeper', 23, '1997-06-11'),
+(9,  'Memphis Depay',    'Forward',    9,  '1994-02-13'),
+(9,  'Virgil van Dijk',  'Midfielder', 4,  '1991-07-08'),
+(9,  'Jasper Cillessen', 'Goalkeeper', 1,  '1989-04-22'),
+(10, 'Cristiano Ronaldo','Forward',    7,  '1985-02-05'),
+(10, 'Bruno Fernandes',  'Midfielder', 8,  '1994-09-08'),
+(10, 'Diogo Costa',      'Goalkeeper', 22, '1999-09-19');
 
 INSERT INTO PlayerStats (stat_id, player_id, goals, assists, minutes_played) VALUES
 (1, 1, 2, 1, 178),
@@ -97,7 +121,12 @@ INSERT INTO PlayerStats (stat_id, player_id, goals, assists, minutes_played) VAL
 (5, 13, 1, 1, 157),
 (6, 16, 0, 0, 83),
 (7, 19, 2, 0, 174),
-(8, 22, 1, 0, 120);
+(8, 22, 1, 0, 120),
+(9,  25, 1, 0, 90), 
+(10, 2,  0, 1, 90),  
+(11, 28, 2, 1, 90),  
+(12, 3,  0, 0, 90);
+
 
 INSERT INTO Referees (referee_id, name) VALUES
 (1, 'Szymon Marciniak'),
@@ -107,9 +136,11 @@ INSERT INTO Referees (referee_id, name) VALUES
 (5, 'Danny Makkelie'),
 (6, 'Daniele Orsato'),
 (7, 'Facundo Tello'),
-(8, 'Jesus Valenzuela');
-(9, 'Szymon Marciniak');
-(10, 'Michael Oliver');
+(8, 'Jesus Valenzuela'),
+(9, 'Szymon Marciniak'),
+(10, 'Michael Oliver'),
+(9,  'Ismail Elfath'),
+(10, 'Slavko Vincic');
 
 INSERT INTO MatchResults (result_id, match_id, team1_score, team2_score, winner_team_id) VALUES
 (1, 1, 2, 0, 1),
