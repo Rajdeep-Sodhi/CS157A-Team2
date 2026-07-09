@@ -97,7 +97,9 @@ INSERT INTO PlayerStats (stat_id, player_id, goals, assists, minutes_played) VAL
 (5, 13, 1, 1, 157),
 (6, 16, 0, 0, 83),
 (7, 19, 2, 0, 174),
-(8, 22, 1, 0, 120);
+(8, 22, 1, 0, 120),
+(9, 23, 0, 1, 154),
+(10, 24, 0, 0, 168);
 
 INSERT INTO Referees (referee_id, name) VALUES
 (1, 'Szymon Marciniak'),
