@@ -85,3 +85,13 @@ INSERT INTO PlayerStats (stat_id, player_id, goals, assists, minutes_played) VAL
 (6, 16, 0, 0, 83),
 (7, 19, 2, 0, 174),
 (8, 22, 1, 0, 120);
+
+INSERT INTO Referees (referee_id, name) VALUES
+(1, 'Szymon Marciniak'),
+(2, 'Michael Oliver'),
+(3, 'Anthony Taylor'),
+(4, 'Clement Turpin'),
+(5, 'Danny Makkelie'),
+(6, 'Daniele Orsato'),
+(7, 'Facundo Tello'),
+(8, 'Jesus Valenzuela');

@@ -84,3 +84,10 @@ CREATE TABLE `PlayerStats` (
   KEY `playerstats_players_fk_idx` (`player_id`),
   CONSTRAINT `playerstats_players_fk` FOREIGN KEY (`player_id`) REFERENCES `Players` (`player_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `Referees` (
+  `referee_id` int NOT NULL,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`referee_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
