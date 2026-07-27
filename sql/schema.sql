@@ -16,7 +16,6 @@ CREATE TABLE Countries (
     fifa_ranking INT,
     confederation VARCHAR(50),
     coach_name VARCHAR(100),
->>>>>>> Stashed changes
     group_letter CHAR(1),
     PRIMARY KEY (country_name)
 );
@@ -54,7 +53,6 @@ CREATE TABLE Referees (
 
 CREATE TABLE Venues (
     venue_id INT AUTO_INCREMENT,
->>>>>>> Stashed changes
     stadium_name VARCHAR(100) NOT NULL,
     city VARCHAR(100),
     host_country VARCHAR(100),
@@ -192,4 +190,4 @@ CREATE TABLE Nationality (
     FOREIGN KEY (country_name) REFERENCES Countries(country_name),
     FOREIGN KEY (referee_id) REFERENCES Referees(referee_id)
 );
->>>>>>> Stashed changes
+
