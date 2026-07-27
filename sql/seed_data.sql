@@ -2,186 +2,783 @@
 
 USE worldcup2026;
 
-INSERT INTO Countries (country_name, fifa_ranking, confederation) VALUES
-('USA',       11, 'CONCACAF'),
-('Mexico',    15, 'CONCACAF'),
-('Brazil',     5, 'CONMEBOL'),
-('Argentina',  1, 'CONMEBOL'),
-('France',     2, 'UEFA'),
-('Germany',   12, 'UEFA'),
-('England',    4, 'UEFA'),
-('Spain',      7, 'UEFA'),
-('Netherlands', 6, 'UEFA'),
-('Portugal',    8, 'UEFA');
+INSERT INTO Users (email, name, password_hash, role) VALUES
+('rajdeep.sodhi@sjsu.edu', 'Rajdeep', 'password', 'admin'),
+('anthony.moll@sjsu.edu', 'Anthony', 'password', 'admin'),
+('thingocduyen.lam@sjsu.edu', 'Thi', 'password', 'admin'),
+('mike.wu@sjsu.edu', 'Mike', 'password', 'fan');
 
-INSERT INTO Teams (country_id, group_letter, coach_name) VALUES
-(1, 'A', 'Mauricio Pochettino'),
-(2, 'A', 'Javier Aguirre'),
-(3, 'B', 'Dorival Junior'),
-(4, 'B', 'Lionel Scaloni'),
-(5, 'C', 'Didier Deschamps'),
-(6, 'C', 'Julian Nagelsmann'),
-(7, 'D', 'Gareth Southgate'),
-(8, 'D', 'Luis de la Fuente'),
-(9,  'A', 'Ronald Koeman'),
-(10, 'B', 'Roberto Martinez');
+
+INSERT INTO Countries (country_name, fifa_ranking, confederation, coach_name, group_letter) VALUES
+('Mexico', 10, 'CONCACAF', NULL, 'A'),
+('South Africa', 54, 'CAF', NULL, 'A'),
+('South Korea', 32, 'AFC', NULL, 'A'),
+('Czechia', 48, 'UEFA', NULL, 'A'),
+('Canada', 30, 'CONCACAF', NULL, 'B'),
+('Bosnia and Herzegovina', 61, 'UEFA', NULL, 'B'),
+('Qatar', 59, 'AFC', NULL, 'B'),
+('Switzerland', 14, 'UEFA', NULL, 'B'),
+('Brazil', 5, 'CONMEBOL', NULL, 'C'),
+('Morocco', 6, 'CAF', NULL, 'C'),
+('Haiti', 88, 'CONCACAF', NULL, 'C'),
+('Scotland', 42, 'UEFA', NULL, 'C'),
+('United States', 16, 'CONCACAF', NULL, 'D'),
+('Paraguay', 34, 'CONMEBOL', NULL, 'D'),
+('Australia', 28, 'AFC', NULL, 'D'),
+('Türkiye', 27, 'UEFA', NULL, 'D'),
+('Germany', 12, 'UEFA', NULL, 'E'),
+('Curaçao', 82, 'CONCACAF', NULL, 'E'),
+('Côte d''Ivoire', 31, 'CAF', NULL, 'E'),
+('Ecuador', 25, 'CONMEBOL', NULL, 'E'),
+('Netherlands', 9, 'UEFA', NULL, 'F'),
+('Japan', 17, 'AFC', NULL, 'F'),
+('Sweden', 37, 'UEFA', NULL, 'F'),
+('Tunisia', 57, 'CAF', NULL, 'F'),
+('Belgium', 8, 'UEFA', NULL, 'G'),
+('Egypt', 24, 'CAF', NULL, 'G'),
+('Iran', 22, 'AFC', NULL, 'G'),
+('New Zealand', 86, 'OFC', NULL, 'G'),
+('Spain', 1, 'UEFA', NULL, 'H'),
+('Cabo Verde', 64, 'CAF', NULL, 'H'),
+('Saudi Arabia', 58, 'AFC', NULL, 'H'),
+('Uruguay', 20, 'CONMEBOL', NULL, 'H'),
+('France', 3, 'UEFA', NULL, 'I'),
+('Senegal', 18, 'CAF', NULL, 'I'),
+('Iraq', 63, 'AFC', NULL, 'I'),
+('Norway', 19, 'UEFA', NULL, 'I'),
+('Argentina', 2, 'CONMEBOL', NULL, 'J'),
+('Algeria', 29, 'CAF', NULL, 'J'),
+('Austria', 23, 'UEFA', NULL, 'J'),
+('Jordan', 73, 'AFC', NULL, 'J'),
+('Portugal', 7, 'UEFA', NULL, 'K'),
+('Congo DR', 41, 'CAF', NULL, 'K'),
+('Uzbekistan', 60, 'AFC', NULL, 'K'),
+('Colombia', 11, 'CONMEBOL', NULL, 'K'),
+('England', 4, 'UEFA', NULL, 'L'),
+('Croatia', 13, 'UEFA', NULL, 'L'),
+('Ghana', 65, 'CAF', NULL, 'L'),
+('Panama', 44, 'CONCACAF', NULL, 'L');
+
+INSERT INTO Referees (country_name, name) VALUES
+('Qatar', 'Abdulrahman Al Jassim'),
+('Saudi Arabia', 'Khalid Al Turais'),
+('Japan', 'Yusuke Araki'),
+('Somalia', 'Omar Abdulkadir Artan'),
+('Gabon', 'Pierre Atcho'),
+('El Salvador', 'Ivan Barton'),
+('Mauritania', 'Dahane Beida'),
+('Paraguay', 'Juan Gabriel Benitez'),
+('Costa Rica', 'Juan Calderon'),
+('Brazil', 'Raphael Claus'),
+('United States', 'Ismail Elfath'),
+('Norway', 'Espen Eskas'),
+('Australia', 'Alireza Faghani'),
+('Argentina', 'Yael Falcon Perez'),
+('Canada', 'Drew Fischer'),
+('Chile', 'Cristian Garay'),
+('Mexico', 'Katia Garcia'),
+('Algeria', 'Mustapha Ghorbal'),
+('Spain', 'Alejandro Hernandez'),
+('Argentina', 'Dario Herrera'),
+('Morocco', 'Jalal Jayed'),
+('New Zealand', 'Campbell-Kirk Kawana-Waugh'),
+('Romania', 'Istvan Kovacs'),
+('France', 'Francois Letexier'),
+('China', 'Ning Ma'),
+('Jordan', 'Adham Makhadmeh'),
+('Netherlands', 'Danny Makkelie'),
+('Poland', 'Szymon Marciniak'),
+('Italy', 'Maurizio Mariani'),
+('Honduras', 'Hector Said Martinez'),
+('Egypt', 'Amin Mohamed'),
+('Jamaica', 'Oshane Nation'),
+('Sweden', 'Glenn Nyberg'),
+('England', 'Michael Oliver'),
+('United Arab Emirates', 'Omar Al Ali'),
+('Peru', 'Kevin Ortega'),
+('United States', 'Tori Penso'),
+('Portugal', 'Joao Pinheiro'),
+('Brazil', 'Ramon Abatti'),
+('Mexico', 'Cesar Ramos'),
+('Colombia', 'Andres Rojas'),
+('Switzerland', 'Sandro Schaerer'),
+('Uzbekistan', 'Ilgiz Tantashev'),
+('England', 'Anthony Taylor'),
+('Uruguay', 'Gustavo Tejera'),
+('Argentina', 'Facundo Tello'),
+('South Africa', 'Abongile Tom'),
+('France', 'Clement Turpin'),
+('Venezuela', 'Jesus Valenzuela'),
+('Slovenia', 'Slavko Vincic'),
+('Brazil', 'Wilton Sampaio'),
+('Germany', 'Felix Zwayer');
 
 INSERT INTO Venues (stadium_name, city, host_country, capacity) VALUES
-('MetLife Stadium',  'New York',     'USA',    82500),
-('SoFi Stadium',     'Los Angeles',  'USA',    70240),
-('Estadio Azteca',   'Mexico City',  'Mexico', 87523),
-('BC Place',         'Vancouver',    'Canada', 54500),
-('AT&T Stadium',           'Arlington',     'USA',    80000),
-('Mercedes-Benz Stadium',  'Atlanta',       'USA',    71000),
-('Hard Rock Stadium',      'Miami Gardens', 'USA',    64767),
-('Lincoln Financial Field','Philadelphia',  'USA',    69796),
-('Levi''s Stadium',        'Santa Clara',   'USA',    68500),
-('Estadio BBVA',           'Monterrey',     'Mexico', 53500);
+-- Canada
+('Toronto Stadium', 'Toronto', 'Canada', 43036),
+('BC Place Vancouver', 'Vancouver', 'Canada', 52497),
 
-INSERT INTO Matches (team1_id, team2_id, venue_id, match_date, stage, team1_score, team2_score) VALUES
-(1, 2, 1, '2026-06-11 18:00:00', 'Group A', 2, 0),
-(3, 4, 2, '2026-06-12 18:00:00', 'Group B', 1, 3),
-(5, 6, 3, '2026-06-13 18:00:00', 'Group C', NULL, NULL),
-(7, 8, 4, '2026-06-14 18:00:00', 'Group D', NULL, NULL),
-(1, 3, 1, '2026-06-18 18:00:00', 'Group A', NULL, NULL),
-(2, 4, 2, '2026-06-19 18:00:00', 'Group B', NULL, NULL),
-(1, 9,  5, '2026-06-20 18:00:00', 'Group A',     3, 1),  
-(2, 9,  6, '2026-06-21 18:00:00', 'Group A',     1, 1),     
-(3, 10, 7, '2026-06-20 18:00:00', 'Group B',     2, 2),     
-(4, 10, 8, '2026-06-21 18:00:00', 'Group B',     2, 0),     
-(5, 7,  9, '2026-06-22 18:00:00', 'Round of 16', NULL, NULL), -- upcoming
-(6, 8, 10, '2026-06-22 18:00:00', 'Round of 16', NULL, NULL); -- upcoming
+-- Mexico
+('Mexico City Stadium', 'Mexico City', 'Mexico', 80824),
+('Guadalajara Stadium', 'Guadalajara', 'Mexico', 45664),
+('Monterrey Stadium', 'Monterrey', 'Mexico', NULL),
 
-INSERT INTO GroupStandings (team_id, wins, draws, losses, goal_diff, points) VALUES
-(1, 1, 0, 0,  2, 3),
-(2, 0, 0, 1, -2, 0),
-(3, 0, 0, 1, -2, 0),
-(4, 1, 0, 0,  2, 3),
-(5, 0, 0, 0,  0, 0),
-(6, 0, 0, 0,  0, 0),
-(7, 0, 0, 0,  0, 0),
-(8, 0, 0, 0,  0, 0),
-(9,  0, 1, 1, -2, 1),
-(10, 0, 1, 1, -2, 1);
+-- United States
+('Atlanta Stadium', 'Atlanta', 'United States', NULL),
+('Boston Stadium', 'Foxborough', 'United States', NULL),
+('Dallas Stadium', 'Arlington', 'United States', NULL),
+('Houston Stadium', 'Houston', 'United States', NULL),
+('Kansas City Stadium', 'Kansas City', 'United States', NULL),
+('Los Angeles Stadium', 'Inglewood', 'United States', NULL),
+('Miami Stadium', 'Miami Gardens', 'United States', NULL),
+('New York New Jersey Stadium', 'East Rutherford', 'United States', NULL),
+('Philadelphia Stadium', 'Philadelphia', 'United States', NULL),
+('San Francisco Bay Area Stadium', 'Santa Clara', 'United States', NULL),
+('Seattle Stadium', 'Seattle', 'United States', NULL);
 
-INSERT INTO Users (user_id, name, email, password_hash, role) VALUES
-(1, 'Admin', 'admin@worldcup.com', 'changeme', 'admin'),
-(2, 'Test Fan', 'fan@worldcup.com', 'changeme', 'fan'),
-(3, 'John Smith', 'john.smith@email.com', 'changeme', 'fan'),
-(4, 'Emily Johnson', 'emily.johnson@email.com', 'changeme', 'fan'),
-(5, 'Michael Brown', 'michael.brown@email.com', 'changeme', 'fan'),
-(6, 'Sophia Davis', 'sophia.davis@email.com', 'changeme', 'fan'),
-(7, 'Daniel Wilson', 'daniel.wilson@email.com', 'changeme', 'fan'),
-(8, 'Olivia Martinez', 'olivia.martinez@email.com', 'changeme', 'fan'),
-(9, 'James Anderson', 'james.anderson@email.com', 'changeme', 'fan'),
-(10, 'Emma Thomas', 'emma.thomas@email.com', 'changeme', 'fan'),
-(11, 'William Taylor', 'william.taylor@email.com', 'changeme', 'fan'),
-(12, 'Isabella Moore', 'isabella.moore@email.com', 'changeme', 'fan'),
-(13, 'Benjamin Jackson', 'ben.jackson@email.com', 'changeme', 'fan'),
-(14, 'Mia White', 'mia.white@email.com', 'changeme', 'fan'),
-(15, 'Lucas Harris', 'lucas.harris@email.com', 'changeme', 'fan');
+INSERT INTO Players
+    (country_name, name, date_of_birth, position, jersey_number)
+VALUES
+-- Argentina
+('Argentina', 'Lionel Messi', '1987-06-24', 'Forward', NULL),
 
-INSERT INTO Players (team_id, name, position, jersey_number, date_of_birth) VALUES
-(1, 'Christian Pulisic', 'Forward', 10, '1998-09-18'),
-(1, 'Weston McKennie', 'Midfielder', 8, '1998-08-28'),
-(1, 'Matt Turner', 'Goalkeeper', 1, '1994-06-24'),
-(2, 'Santiago Gimenez', 'Forward', 11, '2001-04-18'),
-(2, 'Edson Alvarez', 'Midfielder', 4, '1997-10-24'),
-(2, 'Luis Malagon', 'Goalkeeper', 1, '1997-03-02'),
-(3, 'Vinicius Junior', 'Forward', 7, '2000-07-12'),
-(3, 'Rodrygo', 'Forward', 10, '2001-01-09'),
-(3, 'Alisson Becker', 'Goalkeeper', 1, '1992-10-02'),
-(4, 'Lionel Messi', 'Forward', 10, '1987-06-24'),
-(4, 'Julian Alvarez', 'Forward', 9, '2000-01-31'),
-(4, 'Emiliano Martinez', 'Goalkeeper', 23, '1992-09-02'),
-(5, 'Kylian Mbappe', 'Forward', 10, '1998-12-20'),
-(5, 'Aurelien Tchouameni', 'Midfielder', 8, '2000-01-27'),
-(5, 'Mike Maignan', 'Goalkeeper', 16, '1995-07-03'),
-(6, 'Jamal Musiala', 'Midfielder', 10, '2003-02-26'),
-(6, 'Florian Wirtz', 'Midfielder', 17, '2003-05-03'),
-(6, 'Marc-Andre ter Stegen', 'Goalkeeper', 1, '1992-04-30'),
-(7, 'Harry Kane', 'Forward', 9, '1993-07-28'),
-(7, 'Jude Bellingham', 'Midfielder', 10, '2003-06-29'),
-(7, 'Jordan Pickford', 'Goalkeeper', 1, '1994-03-07'),
-(8, 'Lamine Yamal', 'Forward', 19, '2007-07-13'),
-(8, 'Pedri', 'Midfielder', 20, '2002-11-25'),
-(8, 'Unai Simon', 'Goalkeeper', 23, '1997-06-11'),
-(9,  'Memphis Depay',    'Forward',    9,  '1994-02-13'),
-(9,  'Virgil van Dijk',  'Midfielder', 4,  '1991-07-08'),
-(9,  'Jasper Cillessen', 'Goalkeeper', 1,  '1989-04-22'),
-(10, 'Cristiano Ronaldo','Forward',    7,  '1985-02-05'),
-(10, 'Bruno Fernandes',  'Midfielder', 8,  '1994-09-08'),
-(10, 'Diogo Costa',      'Goalkeeper', 22, '1999-09-19');
+-- Portugal
+('Portugal', 'Cristiano Ronaldo', '1985-02-05', 'Forward', NULL),
+('Portugal', 'Bruno Fernandes', '1994-09-08', 'Midfielder', NULL),
 
-INSERT INTO PlayerStats (stat_id, player_id, goals, assists, minutes_played) VALUES
-(1, 1, 2, 1, 178),
-(2, 4, 1, 0, 165),
-(3, 7, 0, 2, 142),
-(4, 10, 3, 1, 180),
-(5, 13, 1, 1, 157),
-(6, 16, 0, 0, 83),
-(7, 19, 2, 0, 174),
-(8, 22, 1, 0, 120),
-(9,  25, 1, 0, 90), 
-(10, 2,  0, 1, 90),  
-(11, 28, 2, 1, 90),  
-(12, 3,  0, 0, 90);
+-- France
+('France', 'Kylian Mbappe', '1998-12-20', 'Forward', NULL),
+('France', 'Ousmane Dembele', '1997-05-15', 'Forward', NULL),
+
+-- Norway
+('Norway', 'Erling Haaland', '2000-07-21', 'Forward', NULL),
+
+-- Spain
+('Spain', 'Lamine Yamal', '2007-07-13', 'Forward', NULL),
+('Spain', 'Rodri', '1996-06-22', 'Midfielder', NULL),
+('Spain', 'Pedri', '2002-11-25', 'Midfielder', NULL),
+
+-- Brazil
+('Brazil', 'Vinicius Junior', '2000-07-12', 'Forward', NULL),
+('Brazil', 'Raphinha', '1996-12-14', 'Forward', NULL),
+
+-- England
+('England', 'Jude Bellingham', '2003-06-29', 'Midfielder', NULL),
+('England', 'Harry Kane', '1993-07-28', 'Forward', NULL),
+('England', 'Bukayo Saka', '2001-09-05', 'Forward', NULL),
+
+-- Egypt
+('Egypt', 'Mohamed Salah', '1992-06-15', 'Forward', NULL),
+
+-- United States
+('United States', 'Christian Pulisic', '1998-09-18', 'Forward', NULL),
+
+-- South Korea
+('South Korea', 'Son Heung-min', '1992-07-08', 'Forward', NULL),
+
+-- Croatia
+('Croatia', 'Luka Modric', '1985-09-09', 'Midfielder', NULL),
+
+-- Belgium
+('Belgium', 'Kevin De Bruyne', '1991-06-28', 'Midfielder', NULL),
+('Belgium', 'Romelu Lukaku', '1993-05-13', 'Forward', NULL),
+
+-- Colombia
+('Colombia', 'Luis Diaz', '1997-01-13', 'Forward', NULL),
+('Colombia', 'James Rodriguez', '1991-07-12', 'Midfielder', NULL),
+
+-- Uruguay
+('Uruguay', 'Federico Valverde', '1998-07-22', 'Midfielder', NULL),
+
+-- Germany
+('Germany', 'Jamal Musiala', '2003-02-26', 'Midfielder', NULL),
+('Germany', 'Florian Wirtz', '2003-05-03', 'Midfielder', NULL),
+
+-- Morocco
+('Morocco', 'Achraf Hakimi', '1998-11-04', 'Defender', NULL),
+
+-- Canada
+('Canada', 'Alphonso Davies', '2000-11-02', 'Defender', NULL),
+('Canada', 'Jonathan David', '2000-01-14', 'Forward', NULL),
+
+-- Algeria
+('Algeria', 'Riyad Mahrez', '1991-02-21', 'Forward', NULL),
+
+-- Mexico
+('Mexico', 'Guillermo Ochoa', '1985-07-13', 'Goalkeeper', NULL);
 
 
-INSERT INTO Referees (referee_id, name) VALUES
-(1, 'Szymon Marciniak'),
-(2, 'Michael Oliver'),
-(3, 'Anthony Taylor'),
-(4, 'Clement Turpin'),
-(5, 'Danny Makkelie'),
-(6, 'Daniele Orsato'),
-(7, 'Facundo Tello'),
-(8, 'Jesus Valenzuela'),
-(9, 'Szymon Marciniak'),
-(10, 'Michael Oliver'),
-(9,  'Ismail Elfath'),
-(10, 'Slavko Vincic');
+-- Match 1: Mexico 2-0 South Africa
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Mexico',
+    'South Africa',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Mexico City Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-11 12:00:00',
+    'Group Stage'
+);
 
-INSERT INTO MatchResults (result_id, match_id, team1_score, team2_score, winner_team_id) VALUES
-(1, 1, 2, 0, 1),
-(2, 2, 1, 3, 4),
-(3, 3, 2, 2, NULL),
-(4, 4, 1, 0, 7),
-(5, 5, 2, 1, 1),
-(6, 6, 0, 2, 4);
+SET @match_1 = LAST_INSERT_ID();
 
-INSERT INTO MatchEvents (event_id, match_id, player_id, event_type, minute) VALUES
-(1, 1, 1, 'Goal', 18),
-(2, 1, 5, 'Yellow Card', 41),
-(3, 1, 2, 'Assist', 18),
-(4, 2, 10, 'Goal', 63),
-(5, 2, 11, 'Assist', 63),
-(6, 3, 14, 'Yellow Card', 29),
-(7, 4, 19, 'Goal', 74),
-(8, 6, 20, 'Red Card', 88),
-(9, 5, 8, 'Goal', 36),
-(10, 5, 7, 'Assist', 36);
+INSERT INTO MatchResults (
+    match_id,
+    team1_score,
+    team2_score,
+    winner_country_name
+)
+VALUES (@match_1, 2, 0, 'Mexico');
 
-INSERT INTO Predictions (prediction_id, user_id, match_id, predicted_team1_score, predicted_team2_score) VALUES
-(1, 1, 1, 2, 1),
-(2, 2, 1, 1, 1),
-(3, 1, 2, 1, 2),
-(4, 2, 2, 0, 2),
-(5, 1, 3, 2, 1),
-(6, 2, 3, 1, 1),
-(7, 1, 4, 1, 0),
-(8, 2, 4, 2, 2),
-(9, 1, 5, 3, 2),
-(10, 2, 5, 1, 0);
 
-INSERT INTO Sponsors (sponsor_id, sponsor_name, contract_amount) VALUES
-(1, 'Adidas', 5000000),
-(2, 'Coca Cola', 4500000),
-(3, 'Nike', 4000000),
-(4, 'Hyundai', 3800000),
-(5, 'Qatar Airways', 4200000),
-(6, 'Lenovo', 3000000),
-(7, 'Aramco', 5500000),
-(8, 'Hisense', 2500000),
-(9, 'Bank of America', 2000000),
-(10, 'AB InBev', 1000000);
+-- Match 2: Korea Republic 2-1 Czechia
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Korea Republic',
+    'Czechia',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Guadalajara Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-12 12:00:00',
+    'Group Stage'
+);
+
+SET @match_2 = LAST_INSERT_ID();
+
+INSERT INTO MatchResults (
+    match_id,
+    team1_score,
+    team2_score,
+    winner_country_name
+)
+VALUES (@match_2, 2, 1, 'Korea Republic');
+
+
+-- Match 3: Canada 1-1 Bosnia and Herzegovina
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Canada',
+    'Bosnia and Herzegovina',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Toronto Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-12 12:00:00',
+    'Group Stage'
+);
+
+SET @match_3 = LAST_INSERT_ID();
+
+INSERT INTO MatchResults (
+    match_id,
+    team1_score,
+    team2_score,
+    winner_country_name
+)
+VALUES (@match_3, 1, 1, NULL);
+
+
+-- Match 4: United States 4-1 Paraguay
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'United States',
+    'Paraguay',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Los Angeles Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-13 12:00:00',
+    'Group Stage'
+);
+
+SET @match_4 = LAST_INSERT_ID();
+
+INSERT INTO MatchResults (
+    match_id,
+    team1_score,
+    team2_score,
+    winner_country_name
+)
+VALUES (@match_4, 4, 1, 'United States');
+
+
+-- Match 5: Brazil 1-1 Morocco
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Brazil',
+    'Morocco',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'New York New Jersey Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-13 12:00:00',
+    'Group Stage'
+);
+
+SET @match_5 = LAST_INSERT_ID();
+
+INSERT INTO MatchResults (
+    match_id,
+    team1_score,
+    team2_score,
+    winner_country_name
+)
+VALUES (@match_5, 1, 1, NULL);
+
+
+-- Match 6: Germany 7-1 Curacao
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Germany',
+    'Curacao',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Houston Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-14 12:00:00',
+    'Group Stage'
+);
+
+SET @match_6 = LAST_INSERT_ID();
+
+INSERT INTO MatchResults (
+    match_id,
+    team1_score,
+    team2_score,
+    winner_country_name
+)
+VALUES (@match_6, 7, 1, 'Germany');
+
+
+-- Match 7: Spain 0-0 Cabo Verde
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Spain',
+    'Cabo Verde',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Atlanta Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-15 12:00:00',
+    'Group Stage'
+);
+
+SET @match_7 = LAST_INSERT_ID();
+
+INSERT INTO MatchResults (
+    match_id,
+    team1_score,
+    team2_score,
+    winner_country_name
+)
+VALUES (@match_7, 0, 0, NULL);
+
+
+-- Match 8: France 3-1 Senegal
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'France',
+    'Senegal',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'New York New Jersey Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-16 12:00:00',
+    'Group Stage'
+);
+
+SET @match_8 = LAST_INSERT_ID();
+
+INSERT INTO MatchResults (
+    match_id,
+    team1_score,
+    team2_score,
+    winner_country_name
+)
+VALUES (@match_8, 3, 1, 'France');
+
+
+-- Match 9: Argentina 3-0 Algeria
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Argentina',
+    'Algeria',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Kansas City Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-17 12:00:00',
+    'Group Stage'
+);
+
+SET @match_9 = LAST_INSERT_ID();
+
+INSERT INTO MatchResults (
+    match_id,
+    team1_score,
+    team2_score,
+    winner_country_name
+)
+VALUES (@match_9, 3, 0, 'Argentina');
+
+
+-- Match 10: England 4-2 Croatia
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'England',
+    'Croatia',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Dallas Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-17 12:00:00',
+    'Group Stage'
+);
+
+SET @match_10 = LAST_INSERT_ID();
+
+INSERT INTO MatchResults (
+    match_id,
+    team1_score,
+    team2_score,
+    winner_country_name
+)
+VALUES (@match_10, 4, 2, 'England');
+
+-- Match 11: Canada vs Qatar
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Canada',
+    'Qatar',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'BC Place Vancouver'
+     LIMIT 1),
+    NULL,
+    '2026-06-18 12:00:00',
+    'Group Stage'
+);
+
+SET @match_11 = LAST_INSERT_ID();
+
+
+-- Match 12: Mexico vs Korea Republic
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Mexico',
+    'Korea Republic',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Guadalajara Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-19 12:00:00',
+    'Group Stage'
+);
+
+SET @match_12 = LAST_INSERT_ID();
+
+
+-- Match 13: United States vs Australia
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'United States',
+    'Australia',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Seattle Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-19 12:00:00',
+    'Group Stage'
+);
+
+SET @match_13 = LAST_INSERT_ID();
+
+
+-- Match 14: Brazil vs Haiti
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Brazil',
+    'Haiti',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Philadelphia Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-20 12:00:00',
+    'Group Stage'
+);
+
+SET @match_14 = LAST_INSERT_ID();
+
+
+-- Match 15: Spain vs Saudi Arabia
+INSERT INTO Matches (
+    team1_country_name,
+    team2_country_name,
+    venue_id,
+    referee_id,
+    match_date,
+    stage
+)
+VALUES (
+    'Spain',
+    'Saudi Arabia',
+    (SELECT venue_id
+     FROM Venues
+     WHERE stadium_name = 'Atlanta Stadium'
+     LIMIT 1),
+    NULL,
+    '2026-06-21 12:00:00',
+    'Group Stage'
+);
+
+SET @match_15 = LAST_INSERT_ID();
+
+
+-- =========================================================
+-- RELATIONSHIP TABLES
+-- =========================================================
+
+INSERT INTO PlaysAsTeam1 (match_id, country_name) VALUES
+(@match_1, 'Mexico'),
+(@match_2, 'Korea Republic'),
+(@match_3, 'Canada'),
+(@match_4, 'United States'),
+(@match_5, 'Brazil'),
+(@match_6, 'Germany'),
+(@match_7, 'Spain'),
+(@match_8, 'France'),
+(@match_9, 'Argentina'),
+(@match_10, 'England'),
+(@match_11, 'Canada'),
+(@match_12, 'Mexico'),
+(@match_13, 'United States'),
+(@match_14, 'Brazil'),
+(@match_15, 'Spain');
+
+
+INSERT INTO PlaysAsTeam2 (match_id, country_name) VALUES
+(@match_1, 'South Africa'),
+(@match_2, 'Czechia'),
+(@match_3, 'Bosnia and Herzegovina'),
+(@match_4, 'Paraguay'),
+(@match_5, 'Morocco'),
+(@match_6, 'Curacao'),
+(@match_7, 'Cabo Verde'),
+(@match_8, 'Senegal'),
+(@match_9, 'Algeria'),
+(@match_10, 'Croatia'),
+(@match_11, 'Qatar'),
+(@match_12, 'Korea Republic'),
+(@match_13, 'Australia'),
+(@match_14, 'Haiti'),
+(@match_15, 'Saudi Arabia');
+
+
+INSERT INTO HostedAt (venue_id, match_id)
+SELECT venue_id, match_id
+FROM Matches
+WHERE match_id IN (
+    @match_1,
+    @match_2,
+    @match_3,
+    @match_4,
+    @match_5,
+    @match_6,
+    @match_7,
+    @match_8,
+    @match_9,
+    @match_10,
+    @match_11,
+    @match_12,
+    @match_13,
+    @match_14,
+    @match_15
+);
+
+INSERT INTO GroupStandings
+    (country_name, wins, draws, losses, points)
+VALUES
+-- Group A
+('Mexico', 1, 0, 0, 3),
+('Korea Republic', 1, 0, 0, 3),
+('Canada', 0, 1, 0, 1),
+('Bosnia and Herzegovina', 0, 1, 0, 1),
+
+-- Group B
+('United States', 1, 0, 0, 3),
+('Brazil', 0, 1, 0, 1),
+('Morocco', 0, 1, 0, 1),
+('Paraguay', 0, 0, 1, 0),
+
+-- Group C
+('Germany', 1, 0, 0, 3),
+('Spain', 0, 1, 0, 1),
+('Cabo Verde', 0, 1, 0, 1),
+('Curacao', 0, 0, 1, 0),
+
+-- Group D
+('France', 1, 0, 0, 3),
+('Argentina', 1, 0, 0, 3),
+('Senegal', 0, 0, 1, 0),
+('Algeria', 0, 0, 1, 0),
+
+-- Group E
+('England', 1, 0, 0, 3),
+('Croatia', 0, 0, 1, 0),
+('Qatar', 0, 0, 0, 0),
+('Australia', 0, 0, 0, 0),
+
+-- Group F
+('Portugal', 0, 0, 0, 0),
+('Belgium', 0, 0, 0, 0),
+('Colombia', 0, 0, 0, 0),
+('Haiti', 0, 0, 0, 0),
+
+-- Group G
+('Norway', 0, 0, 0, 0),
+('Egypt', 0, 0, 0, 0),
+('Saudi Arabia', 0, 0, 0, 0),
+('Japan', 0, 0, 0, 0),
+
+-- Group H
+('Uruguay', 0, 0, 0, 0),
+('Switzerland', 0, 0, 0, 0),
+('Austria', 0, 0, 0, 0),
+('Ghana', 0, 0, 0, 0),
+
+-- Group I
+('Netherlands', 0, 0, 0, 0),
+('Ivory Coast', 0, 0, 0, 0),
+('South Africa', 0, 0, 1, 0),
+('Czechia', 0, 0, 1, 0),
+
+-- Group J
+('Italy', 0, 0, 0, 0),
+('Denmark', 0, 0, 0, 0),
+('Ecuador', 0, 0, 0, 0),
+('Tunisia', 0, 0, 0, 0),
+
+-- Group K
+('Poland', 0, 0, 0, 0),
+('Sweden', 0, 0, 0, 0),
+('Serbia', 0, 0, 0, 0),
+('Costa Rica', 0, 0, 0, 0),
+
+-- Group L
+('Chile', 0, 0, 0, 0),
+('Nigeria', 0, 0, 0, 0),
+('Cameroon', 0, 0, 0, 0),
+('New Zealand', 0, 0, 0, 0);
