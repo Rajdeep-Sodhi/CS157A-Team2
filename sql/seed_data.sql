@@ -27,8 +27,8 @@ INSERT INTO Countries (country_name, fifa_ranking, confederation, coach_name, gr
 ('Australia', 28, 'AFC', NULL, 'D'),
 ('Türkiye', 27, 'UEFA', NULL, 'D'),
 ('Germany', 12, 'UEFA', NULL, 'E'),
-('Curaçao', 82, 'CONCACAF', NULL, 'E'),
-('Côte d''Ivoire', 31, 'CAF', NULL, 'E'),
+('Curacao', 82, 'CONCACAF', NULL, 'E'),
+('Ivory Coast', 31, 'CAF', NULL, 'E'),
 ('Ecuador', 25, 'CONMEBOL', NULL, 'E'),
 ('Netherlands', 9, 'UEFA', NULL, 'F'),
 ('Japan', 17, 'AFC', NULL, 'F'),
@@ -240,7 +240,7 @@ INSERT INTO MatchResults (
 VALUES (@match_1, 2, 0, 'Mexico');
 
 
--- Match 2: Korea Republic 2-1 Czechia
+-- Match 2: South Korea 2-1 Czechia
 INSERT INTO Matches (
     team1_country_name,
     team2_country_name,
@@ -250,7 +250,7 @@ INSERT INTO Matches (
     stage
 )
 VALUES (
-    'Korea Republic',
+    'South Korea',
     'Czechia',
     (SELECT venue_id
      FROM Venues
@@ -269,7 +269,7 @@ INSERT INTO MatchResults (
     team2_score,
     winner_country_name
 )
-VALUES (@match_2, 2, 1, 'Korea Republic');
+VALUES (@match_2, 2, 1, 'South Korea');
 
 
 -- Match 3: Canada 1-1 Bosnia and Herzegovina
@@ -551,7 +551,7 @@ VALUES (
 SET @match_11 = LAST_INSERT_ID();
 
 
--- Match 12: Mexico vs Korea Republic
+-- Match 12: Mexico vs South Korea
 INSERT INTO Matches (
     team1_country_name,
     team2_country_name,
@@ -562,7 +562,7 @@ INSERT INTO Matches (
 )
 VALUES (
     'Mexico',
-    'Korea Republic',
+    'South Korea',
     (SELECT venue_id
      FROM Venues
      WHERE stadium_name = 'Guadalajara Stadium'
@@ -653,7 +653,7 @@ SET @match_15 = LAST_INSERT_ID();
 
 INSERT INTO PlaysAsTeam1 (match_id, country_name) VALUES
 (@match_1, 'Mexico'),
-(@match_2, 'Korea Republic'),
+(@match_2, 'South Korea'),
 (@match_3, 'Canada'),
 (@match_4, 'United States'),
 (@match_5, 'Brazil'),
@@ -681,7 +681,7 @@ INSERT INTO PlaysAsTeam2 (match_id, country_name) VALUES
 (@match_9, 'Algeria'),
 (@match_10, 'Croatia'),
 (@match_11, 'Qatar'),
-(@match_12, 'Korea Republic'),
+(@match_12, 'South Korea'),
 (@match_13, 'Australia'),
 (@match_14, 'Haiti'),
 (@match_15, 'Saudi Arabia');
@@ -713,72 +713,72 @@ INSERT INTO GroupStandings
 VALUES
 -- Group A
 ('Mexico', 1, 0, 0, 3),
-('Korea Republic', 1, 0, 0, 3),
-('Canada', 0, 1, 0, 1),
-('Bosnia and Herzegovina', 0, 1, 0, 1),
-
--- Group B
-('United States', 1, 0, 0, 3),
-('Brazil', 0, 1, 0, 1),
-('Morocco', 0, 1, 0, 1),
-('Paraguay', 0, 0, 1, 0),
-
--- Group C
-('Germany', 1, 0, 0, 3),
-('Spain', 0, 1, 0, 1),
-('Cabo Verde', 0, 1, 0, 1),
-('Curacao', 0, 0, 1, 0),
-
--- Group D
-('France', 1, 0, 0, 3),
-('Argentina', 1, 0, 0, 3),
-('Senegal', 0, 0, 1, 0),
-('Algeria', 0, 0, 1, 0),
-
--- Group E
-('England', 1, 0, 0, 3),
-('Croatia', 0, 0, 1, 0),
-('Qatar', 0, 0, 0, 0),
-('Australia', 0, 0, 0, 0),
-
--- Group F
-('Portugal', 0, 0, 0, 0),
-('Belgium', 0, 0, 0, 0),
-('Colombia', 0, 0, 0, 0),
-('Haiti', 0, 0, 0, 0),
-
--- Group G
-('Norway', 0, 0, 0, 0),
-('Egypt', 0, 0, 0, 0),
-('Saudi Arabia', 0, 0, 0, 0),
-('Japan', 0, 0, 0, 0),
-
--- Group H
-('Uruguay', 0, 0, 0, 0),
-('Switzerland', 0, 0, 0, 0),
-('Austria', 0, 0, 0, 0),
-('Ghana', 0, 0, 0, 0),
-
--- Group I
-('Netherlands', 0, 0, 0, 0),
-('Ivory Coast', 0, 0, 0, 0),
+('South Korea', 1, 0, 0, 3),
 ('South Africa', 0, 0, 1, 0),
 ('Czechia', 0, 0, 1, 0),
 
--- Group J
-('Italy', 0, 0, 0, 0),
-('Denmark', 0, 0, 0, 0),
+-- Group B
+('Canada', 0, 1, 0, 1),
+('Bosnia and Herzegovina', 0, 1, 0, 1),
+('Qatar', 0, 0, 0, 0),
+('Switzerland', 0, 0, 0, 0),
+
+-- Group C
+('Brazil', 0, 1, 0, 1),
+('Morocco', 0, 1, 0, 1),
+('Haiti', 0, 0, 0, 0),
+('Scotland', 0, 0, 0, 0),
+
+-- Group D
+('United States', 1, 0, 0, 3),
+('Paraguay', 0, 0, 1, 0),
+('Australia', 0, 0, 0, 0),
+('Türkiye', 0, 0, 0, 0),
+
+-- Group E
+('Germany', 1, 0, 0, 3),
+('Curacao', 0, 0, 1, 0),
+('Ivory Coast', 0, 0, 0, 0),
 ('Ecuador', 0, 0, 0, 0),
+
+-- Group F
+('Netherlands', 0, 0, 0, 0),
+('Japan', 0, 0, 0, 0),
+('Sweden', 0, 0, 0, 0),
 ('Tunisia', 0, 0, 0, 0),
 
+-- Group G
+('Belgium', 0, 0, 0, 0),
+('Egypt', 0, 0, 0, 0),
+('Iran', 0, 0, 0, 0),
+('New Zealand', 0, 0, 0, 0),
+
+-- Group H
+('Spain', 0, 1, 0, 1),
+('Cabo Verde', 0, 1, 0, 1),
+('Saudi Arabia', 0, 0, 0, 0),
+('Uruguay', 0, 0, 0, 0),
+
+-- Group I
+('France', 1, 0, 0, 3),
+('Senegal', 0, 0, 1, 0),
+('Iraq', 0, 0, 0, 0),
+('Norway', 0, 0, 0, 0),
+
+-- Group J
+('Argentina', 1, 0, 0, 3),
+('Algeria', 0, 0, 1, 0),
+('Austria', 0, 0, 0, 0),
+('Jordan', 0, 0, 0, 0),
+
 -- Group K
-('Poland', 0, 0, 0, 0),
-('Sweden', 0, 0, 0, 0),
-('Serbia', 0, 0, 0, 0),
-('Costa Rica', 0, 0, 0, 0),
+('Portugal', 0, 0, 0, 0),
+('Congo DR', 0, 0, 0, 0),
+('Uzbekistan', 0, 0, 0, 0),
+('Colombia', 0, 0, 0, 0),
 
 -- Group L
-('Chile', 0, 0, 0, 0),
-('Nigeria', 0, 0, 0, 0),
-('Cameroon', 0, 0, 0, 0),
-('New Zealand', 0, 0, 0, 0);
+('England', 1, 0, 0, 3),
+('Croatia', 0, 0, 1, 0),
+('Ghana', 0, 0, 0, 0),
+('Panama', 0, 0, 0, 0);

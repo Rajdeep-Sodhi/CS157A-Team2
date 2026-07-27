@@ -47,8 +47,7 @@ CREATE TABLE Referees (
     referee_id INT AUTO_INCREMENT,
     country_name VARCHAR(100) NOT NULL,
     name VARCHAR(100) NOT NULL,
-    PRIMARY KEY (referee_id),
-    FOREIGN KEY (country_name) REFERENCES Countries(country_name)
+    PRIMARY KEY (referee_id)
 );
 
 CREATE TABLE Venues (
@@ -190,4 +189,3 @@ CREATE TABLE Nationality (
     FOREIGN KEY (country_name) REFERENCES Countries(country_name),
     FOREIGN KEY (referee_id) REFERENCES Referees(referee_id)
 );
-
