@@ -53,7 +53,7 @@
                     <td><%= t.get("confederation") == null ? "-" : t.get("confederation") %></td>
                     <td><%= t.get("coach_name") == null ? "-" : t.get("coach_name") %></td>
                     <td><%= t.get("player_count") %></td>
-                    <td><a class="btn btn-sm btn-secondary" href="teams?country=<%= URLEncoder.encode(tCountry, "UTF-8") %>">View Roster</a></td>
+                    <td><a class="btn btn-sm btn-secondary" href="teams?country=<%= URLEncoder.encode(tCountry, "UTF-8") %>#roster">View Roster</a></td>
                 </tr>
             <% } %>
             <% if (teams.isEmpty()) { %>
@@ -100,7 +100,7 @@
     <% } %>
 
     <% if (selectedTeam != null) { %>
-    <section class="section">
+    <section class="section" id="roster">
         <h2 class="section-title"><%= selectedCountry %> - Roster</h2>
 
         <div class="two-col">
