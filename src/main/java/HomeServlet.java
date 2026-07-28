@@ -32,13 +32,12 @@ public class HomeServlet extends HttpServlet {
                 "SELECT m.match_id, m.match_date, m.stage, " +
                 "       c1.country_name AS team1, c2.country_name AS team2, " +
                 "       v.stadium_name, v.city, " +
-                "       m.team1_score, m.team2_score " +
+                "       mr.team1_score, mr.team2_score " +
                 "FROM Matches m " +
-                "JOIN Teams t1 ON m.team1_id = t1.team_id " +
-                "JOIN Teams t2 ON m.team2_id = t2.team_id " +
-                "JOIN Countries c1 ON t1.country_id = c1.country_id " +
-                "JOIN Countries c2 ON t2.country_id = c2.country_id " +
+                "JOIN Countries c1 ON m.team1_country_name = c1.country_name " +
+                "JOIN Countries c2 ON m.team2_country_name = c2.country_name " +
                 "JOIN Venues v ON m.venue_id = v.venue_id " +
+                "LEFT JOIN MatchResults mr ON m.match_id = mr.match_id " +
                 "ORDER BY m.match_date ASC";
 
             try (Statement st = conn.createStatement();
@@ -59,12 +58,11 @@ public class HomeServlet extends HttpServlet {
 
             // --- Fetch group standings ---
             String standingsSQL =
-                "SELECT c.country_name, t.group_letter, " +
-                "       gs.wins, gs.draws, gs.losses, gs.goal_diff, gs.points " +
+                "SELECT c.country_name, c.group_letter, " +
+                "       gs.wins, gs.draws, gs.losses, gs.points " +
                 "FROM GroupStandings gs " +
-                "JOIN Teams t ON gs.team_id = t.team_id " +
-                "JOIN Countries c ON t.country_id = c.country_id " +
-                "ORDER BY t.group_letter ASC, gs.points DESC, gs.goal_diff DESC";
+                "JOIN Countries c ON gs.country_name = c.country_name " +
+                "ORDER BY c.group_letter ASC, gs.points DESC, c.country_name ASC";
 
             try (Statement st = conn.createStatement();
                  ResultSet rs = st.executeQuery(standingsSQL)) {
@@ -75,7 +73,6 @@ public class HomeServlet extends HttpServlet {
                     row.put("wins",      rs.getString("wins"));
                     row.put("draws",     rs.getString("draws"));
                     row.put("losses",    rs.getString("losses"));
-                    row.put("goal_diff", rs.getString("goal_diff"));
                     row.put("points",    rs.getString("points"));
                     standings.add(row);
                 }

@@ -1,26 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.sql.*, java.util.*" %>
+<%@ page import="dao.DBConnection,java.sql.*,java.util.*" %>
 <%
     List<Map<String,String>> matches = new ArrayList<>();
     List<Map<String,String>> standings = new ArrayList<>();
     String dbError = null;
 
     try {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection conn = DriverManager.getConnection(
-            "jdbc:mysql://localhost:3306/worldcup2026?useSSL=false&allowPublicKeyRetrieval=true",
-            "root", "YOUR_PASSWORD_HERE");
+        Connection conn = DBConnection.getConnection();
 
         String matchSQL =
             "SELECT m.match_date, m.stage, " +
             "c1.country_name AS team1, c2.country_name AS team2, " +
-            "v.stadium_name, v.city, m.team1_score, m.team2_score " +
+            "v.stadium_name, v.city, mr.team1_score, mr.team2_score " +
             "FROM Matches m " +
-            "JOIN Teams t1 ON m.team1_id = t1.team_id " +
-            "JOIN Teams t2 ON m.team2_id = t2.team_id " +
-            "JOIN Countries c1 ON t1.country_id = c1.country_id " +
-            "JOIN Countries c2 ON t2.country_id = c2.country_id " +
+            "JOIN Countries c1 ON m.team1_country_name = c1.country_name " +
+            "JOIN Countries c2 ON m.team2_country_name = c2.country_name " +
             "JOIN Venues v ON m.venue_id = v.venue_id " +
+            "LEFT JOIN MatchResults mr ON m.match_id = mr.match_id " +
             "ORDER BY m.match_date ASC";
         ResultSet rs = conn.createStatement().executeQuery(matchSQL);
         while (rs.next()) {
@@ -37,12 +33,11 @@
         }
 
         String standSQL =
-            "SELECT c.country_name, t.group_letter, " +
-            "gs.wins, gs.draws, gs.losses, gs.goal_diff, gs.points " +
+            "SELECT c.country_name, c.group_letter, " +
+            "gs.wins, gs.draws, gs.losses, gs.points " +
             "FROM GroupStandings gs " +
-            "JOIN Teams t ON gs.team_id = t.team_id " +
-            "JOIN Countries c ON t.country_id = c.country_id " +
-            "ORDER BY t.group_letter ASC, gs.points DESC, gs.goal_diff DESC";
+            "JOIN Countries c ON gs.country_name = c.country_name " +
+            "ORDER BY c.group_letter ASC, gs.points DESC, c.country_name ASC";
         rs = conn.createStatement().executeQuery(standSQL);
         while (rs.next()) {
             Map<String,String> row = new LinkedHashMap<>();
@@ -51,7 +46,6 @@
             row.put("wins",      rs.getString("wins"));
             row.put("draws",     rs.getString("draws"));
             row.put("losses",    rs.getString("losses"));
-            row.put("goal_diff", rs.getString("goal_diff"));
             row.put("points",    rs.getString("points"));
             standings.add(row);
         }
@@ -116,20 +110,7 @@
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="nav-brand">🏆 World Cup 2026</div>
-    <ul class="nav-links">
-        <li><a href="index.jsp" class="active">Home</a></li>
-        <li><a href="matches.jsp">Matches</a></li>
-        <li><a href="standings.jsp">Standings</a></li>
-        <li><a href="teams.jsp">Teams</a></li>
-        <li><a href="predictions.jsp">Predictions</a></li>
-    </ul>
-    <div class="nav-auth">
-        <a href="login.jsp" class="btn-login">Sign In</a>
-        <a href="register.jsp" class="btn-register">Register</a>
-    </div>
-</nav>
+<%@ include file="/WEB-INF/jspf/navbar.jspf" %>
 
 <section class="hero">
     <div class="hero-label">FIFA WORLD CUP 2026</div>
@@ -182,7 +163,7 @@
             <div class="group-card">
                 <h3 class="group-title">GROUP <%= entry.getKey() %></h3>
                 <table class="data-table">
-                    <thead><tr><th>Team</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead>
+                    <thead><tr><th>Team</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
                     <tbody>
                     <% int rank = 1; for (Map<String,String> row : entry.getValue()) { %>
                         <tr class="<%= rank <= 2 ? "qualify-row" : "" %>">
@@ -190,7 +171,6 @@
                             <td><%= row.get("wins") %></td>
                             <td><%= row.get("draws") %></td>
                             <td><%= row.get("losses") %></td>
-                            <td><%= row.get("goal_diff") %></td>
                             <td><strong><%= row.get("points") %></strong></td>
                         </tr>
                     <% rank++; } %>

@@ -1,0 +1,23 @@
+<%
+    String currentPage = request.getRequestURI();
+    boolean signedIn = session.getAttribute("userId") != null;
+%>
+<nav class="navbar">
+    <div class="nav-brand">🏆 World Cup 2026</div>
+    <ul class="nav-links">
+        <li><a href="<%= request.getContextPath() %>/" class="<%= currentPage.endsWith("/") || currentPage.endsWith("/index.jsp") ? "active" : "" %>">Home</a></li>
+        <li><a href="<%= request.getContextPath() %>/matches.jsp" class="<%= currentPage.endsWith("/matches.jsp") ? "active" : "" %>">Matches</a></li>
+        <li><a href="<%= request.getContextPath() %>/standings.jsp" class="<%= currentPage.endsWith("/standings.jsp") ? "active" : "" %>">Standings</a></li>
+        <li><a href="<%= request.getContextPath() %>/teams.jsp" class="<%= currentPage.endsWith("/teams.jsp") ? "active" : "" %>">Teams</a></li>
+        <li><a href="<%= request.getContextPath() %>/predictions.jsp" class="<%= currentPage.endsWith("/predictions.jsp") ? "active" : "" %>">Predictions</a></li>
+    </ul>
+    <div class="nav-auth">
+        <% if (signedIn) { %>
+            <span class="nav-user"><%= session.getAttribute("userName") %></span>
+            <a href="<%= request.getContextPath() %>/logout" class="btn-login">Logout</a>
+        <% } else { %>
+            <a href="<%= request.getContextPath() %>/login.jsp" class="btn-login">Sign In</a>
+            <a href="<%= request.getContextPath() %>/register.jsp" class="btn-register">Register</a>
+        <% } %>
+    </div>
+</nav>
