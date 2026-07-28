@@ -26,7 +26,7 @@
 <main class="container">
 
     <% if (dbError != null) { %>
-    <div class="db-error">⚠️ <%= dbError %></div>
+    <div class="db-error">Error: <%= dbError %></div>
     <% } %>
 
     <section class="section">

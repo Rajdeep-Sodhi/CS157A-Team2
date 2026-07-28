@@ -81,7 +81,7 @@
 <main class="container">
 
 <% if (dbError != null) { %>
-<div class="db-error">⚠️ DB Error: <%= dbError %></div>
+<div class="db-error">DB Error: <%= dbError %></div>
 <% } %>
 
     <section class="section">

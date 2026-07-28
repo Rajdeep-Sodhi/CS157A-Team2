@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="model.User" %>
 <%
     User __navUser = (User) session.getAttribute("authUser");
@@ -5,7 +6,7 @@
     if (currentPage == null) currentPage = "";
 %>
 <nav class="navbar">
-    <div class="nav-brand">🏆 World Cup 2026</div>
+    <div class="nav-brand"><span style="color:#3b82f6;font-weight:800;letter-spacing:1px;">FIFA</span> World Cup 2026</div>
     <ul class="nav-links">
         <li><a href="<%= request.getContextPath() %>/" class="<%= currentPage.equals("home") ? "active" : "" %>">Home</a></li>
         <li><a href="<%= request.getContextPath() %>/matches" class="<%= currentPage.equals("matches") ? "active" : "" %>">Matches</a></li>
