@@ -1,64 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.sql.*, java.util.*" %>
+<%@ page import="java.util.*" %>
 <%
-    List<Map<String,String>> matches = new ArrayList<>();
-    List<Map<String,String>> standings = new ArrayList<>();
-    String dbError = null;
-
-    try {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection conn = DriverManager.getConnection(
-            "jdbc:mysql://localhost:3306/worldcup2026?useSSL=false&allowPublicKeyRetrieval=true",
-            "root", "YOUR_PASSWORD_HERE");
-
-        String matchSQL =
-            "SELECT m.match_date, m.stage, " +
-            "c1.country_name AS team1, c2.country_name AS team2, " +
-            "v.stadium_name, v.city, m.team1_score, m.team2_score " +
-            "FROM Matches m " +
-            "JOIN Teams t1 ON m.team1_id = t1.team_id " +
-            "JOIN Teams t2 ON m.team2_id = t2.team_id " +
-            "JOIN Countries c1 ON t1.country_id = c1.country_id " +
-            "JOIN Countries c2 ON t2.country_id = c2.country_id " +
-            "JOIN Venues v ON m.venue_id = v.venue_id " +
-            "ORDER BY m.match_date ASC";
-        ResultSet rs = conn.createStatement().executeQuery(matchSQL);
-        while (rs.next()) {
-            Map<String,String> row = new LinkedHashMap<>();
-            row.put("match_date",  rs.getString("match_date"));
-            row.put("stage",       rs.getString("stage"));
-            row.put("team1",       rs.getString("team1"));
-            row.put("team2",       rs.getString("team2"));
-            row.put("stadium",     rs.getString("stadium_name"));
-            row.put("city",        rs.getString("city"));
-            row.put("team1_score", rs.getString("team1_score"));
-            row.put("team2_score", rs.getString("team2_score"));
-            matches.add(row);
-        }
-
-        String standSQL =
-            "SELECT c.country_name, t.group_letter, " +
-            "gs.wins, gs.draws, gs.losses, gs.goal_diff, gs.points " +
-            "FROM GroupStandings gs " +
-            "JOIN Teams t ON gs.team_id = t.team_id " +
-            "JOIN Countries c ON t.country_id = c.country_id " +
-            "ORDER BY t.group_letter ASC, gs.points DESC, gs.goal_diff DESC";
-        rs = conn.createStatement().executeQuery(standSQL);
-        while (rs.next()) {
-            Map<String,String> row = new LinkedHashMap<>();
-            row.put("country",   rs.getString("country_name"));
-            row.put("group",     rs.getString("group_letter"));
-            row.put("wins",      rs.getString("wins"));
-            row.put("draws",     rs.getString("draws"));
-            row.put("losses",    rs.getString("losses"));
-            row.put("goal_diff", rs.getString("goal_diff"));
-            row.put("points",    rs.getString("points"));
-            standings.add(row);
-        }
-        conn.close();
-    } catch (Exception e) {
-        dbError = e.getMessage();
-    }
+    // Data comes from HomeServlet (mapped to the site root), which
+    // already queried the DB and forwarded here - this page just
+    // renders it. (Previously this page ran its own independent,
+    // hardcoded-password DB connection here, which always failed
+    // regardless of the real DBConnection.java credentials.)
+    List<Map<String,String>> matches = (List<Map<String,String>>) request.getAttribute("matches");
+    List<Map<String,String>> standings = (List<Map<String,String>>) request.getAttribute("standings");
+    String dbError = (String) request.getAttribute("dbError");
+    if (matches == null) matches = new ArrayList<>();
+    if (standings == null) standings = new ArrayList<>();
 
     Map<String,List<Map<String,String>>> grouped = new LinkedHashMap<>();
     for (Map<String,String> row : standings) {
@@ -85,6 +37,7 @@
         .btn-login:hover{border-color:#94a3b8;color:#f8fafc}
         .btn-register{padding:.35rem 1rem;background:#3b82f6;color:#fff;text-decoration:none;border-radius:6px;font-size:.85rem;font-weight:600}
         .btn-register:hover{background:#2563eb}
+        .nav-user{color:#cbd5e1;font-size:.85rem;margin-right:.25rem}
         .hero{background:#1e293b;border-bottom:1px solid #334155;padding:4rem 2rem;text-align:center}
         .hero-label{font-size:.72rem;letter-spacing:4px;color:#3b82f6;font-weight:700;margin-bottom:1rem;text-transform:uppercase}
         .hero h1{font-size:2.8rem;font-weight:800;color:#f8fafc;letter-spacing:2px;margin-bottom:.75rem}
@@ -116,20 +69,8 @@
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="nav-brand">🏆 World Cup 2026</div>
-    <ul class="nav-links">
-        <li><a href="index.jsp" class="active">Home</a></li>
-        <li><a href="matches.jsp">Matches</a></li>
-        <li><a href="standings.jsp">Standings</a></li>
-        <li><a href="teams.jsp">Teams</a></li>
-        <li><a href="predictions.jsp">Predictions</a></li>
-    </ul>
-    <div class="nav-auth">
-        <a href="login.jsp" class="btn-login">Sign In</a>
-        <a href="register.jsp" class="btn-register">Register</a>
-    </div>
-</nav>
+<% request.setAttribute("currentPage", "home"); %>
+<%@ include file="nav.jsp" %>
 
 <section class="hero">
     <div class="hero-label">FIFA WORLD CUP 2026</div>
@@ -171,6 +112,9 @@
                         <%= played ? "Finished" : "Upcoming" %></span></td>
                 </tr>
             <% } %>
+            <% if (matches.isEmpty()) { %>
+                <tr><td colspan="7" class="team-name" style="color:#94a3b8;font-weight:400;">No matches scheduled yet.</td></tr>
+            <% } %>
             </tbody>
         </table>
     </section>
@@ -182,7 +126,7 @@
             <div class="group-card">
                 <h3 class="group-title">GROUP <%= entry.getKey() %></h3>
                 <table class="data-table">
-                    <thead><tr><th>Team</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead>
+                    <thead><tr><th>Team</th><th>W</th><th>D</th><th>L</th><th>Pts</th></tr></thead>
                     <tbody>
                     <% int rank = 1; for (Map<String,String> row : entry.getValue()) { %>
                         <tr class="<%= rank <= 2 ? "qualify-row" : "" %>">
@@ -190,13 +134,15 @@
                             <td><%= row.get("wins") %></td>
                             <td><%= row.get("draws") %></td>
                             <td><%= row.get("losses") %></td>
-                            <td><%= row.get("goal_diff") %></td>
                             <td><strong><%= row.get("points") %></strong></td>
                         </tr>
                     <% rank++; } %>
                     </tbody>
                 </table>
             </div>
+        <% } %>
+        <% if (grouped.isEmpty()) { %>
+            <p style="color:#94a3b8;">No standings yet.</p>
         <% } %>
         </div>
     </section>

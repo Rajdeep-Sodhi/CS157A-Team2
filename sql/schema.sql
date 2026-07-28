@@ -189,3 +189,27 @@ CREATE TABLE Nationality (
     FOREIGN KEY (country_name) REFERENCES Countries(country_name),
     FOREIGN KEY (referee_id) REFERENCES Referees(referee_id)
 );
+
+-- ============================================================
+-- Migration for Functional Requirements 1-4
+-- (Users/roles, Team & Player management, Match management,
+--  Stadium/Venue management)
+-- Safe to run once against an already-created worldcup2026 DB.
+-- Does NOT touch any existing rows/seed data.
+-- ============================================================
+
+-- Players.country_name must be nullable so that deleting a team
+-- ("Country") can leave its players behind, unassigned
+-- ("Not on a Team"), instead of destroying their records.
+ALTER TABLE Players MODIFY country_name VARCHAR(100) NULL;
+
+-- A venue can't host two matches at the same date/time.
+-- (Enforced in application code too, but backed here at the DB level.)
+ALTER TABLE Matches ADD CONSTRAINT uq_venue_datetime UNIQUE (venue_id, match_date);
+
+-- The registration form collects date of birth and country
+-- (per the functional requirements), but Users never had
+-- columns for them. Both are optional/nullable so this doesn't
+-- affect any existing seeded rows.
+ALTER TABLE Users ADD COLUMN date_of_birth DATE NULL;
+ALTER TABLE Users ADD COLUMN country VARCHAR(100) NULL;

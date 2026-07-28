@@ -14,8 +14,14 @@ import java.util.*;
  * HomeServlet.java
  * Fetches match schedule and group standings from MySQL,
  * then forwards to index.jsp for rendering.
+ *
+ * NOTE: mapped to "" (exact context-root match only), NOT "/".
+ * A url-pattern of "/" becomes the servlet container's *default*
+ * servlet, silently swallowing every request that isn't matched
+ * by something more specific - including static files like
+ * /css/style.css. "" maps only the bare site root.
  */
-@WebServlet("/")
+@WebServlet("")
 public class HomeServlet extends HttpServlet {
 
     @Override
@@ -28,16 +34,18 @@ public class HomeServlet extends HttpServlet {
         try (Connection conn = DBConnection.getConnection()) {
 
             // --- Fetch matches with team names and venue ---
+            // Countries.country_name IS the team name directly (no
+            // separate Teams table in the current schema), and scores
+            // live in MatchResults rather than on Matches itself.
             String matchSQL =
                 "SELECT m.match_id, m.match_date, m.stage, " +
-                "       c1.country_name AS team1, c2.country_name AS team2, " +
+                "       m.team1_country_name AS team1, m.team2_country_name AS team2, " +
                 "       v.stadium_name, v.city, " +
-                "       m.team1_score, m.team2_score " +
+                "       (SELECT mr.team1_score FROM MatchResults mr " +
+                "         WHERE mr.match_id = m.match_id ORDER BY mr.result_id DESC LIMIT 1) AS team1_score, " +
+                "       (SELECT mr.team2_score FROM MatchResults mr " +
+                "         WHERE mr.match_id = m.match_id ORDER BY mr.result_id DESC LIMIT 1) AS team2_score " +
                 "FROM Matches m " +
-                "JOIN Teams t1 ON m.team1_id = t1.team_id " +
-                "JOIN Teams t2 ON m.team2_id = t2.team_id " +
-                "JOIN Countries c1 ON t1.country_id = c1.country_id " +
-                "JOIN Countries c2 ON t2.country_id = c2.country_id " +
                 "JOIN Venues v ON m.venue_id = v.venue_id " +
                 "ORDER BY m.match_date ASC";
 
@@ -58,13 +66,14 @@ public class HomeServlet extends HttpServlet {
             }
 
             // --- Fetch group standings ---
+            // (Current schema's GroupStandings has no goal_diff column,
+            // so that's no longer part of the output here.)
             String standingsSQL =
-                "SELECT c.country_name, t.group_letter, " +
-                "       gs.wins, gs.draws, gs.losses, gs.goal_diff, gs.points " +
+                "SELECT gs.country_name, c.group_letter, " +
+                "       gs.wins, gs.draws, gs.losses, gs.points " +
                 "FROM GroupStandings gs " +
-                "JOIN Teams t ON gs.team_id = t.team_id " +
-                "JOIN Countries c ON t.country_id = c.country_id " +
-                "ORDER BY t.group_letter ASC, gs.points DESC, gs.goal_diff DESC";
+                "JOIN Countries c ON gs.country_name = c.country_name " +
+                "ORDER BY c.group_letter ASC, gs.points DESC";
 
             try (Statement st = conn.createStatement();
                  ResultSet rs = st.executeQuery(standingsSQL)) {
@@ -75,7 +84,6 @@ public class HomeServlet extends HttpServlet {
                     row.put("wins",      rs.getString("wins"));
                     row.put("draws",     rs.getString("draws"));
                     row.put("losses",    rs.getString("losses"));
-                    row.put("goal_diff", rs.getString("goal_diff"));
                     row.put("points",    rs.getString("points"));
                     standings.add(row);
                 }
