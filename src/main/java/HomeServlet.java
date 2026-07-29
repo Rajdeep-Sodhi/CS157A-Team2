@@ -47,6 +47,7 @@ public class HomeServlet extends HttpServlet {
                 "         WHERE mr.match_id = m.match_id ORDER BY mr.result_id DESC LIMIT 1) AS team2_score " +
                 "FROM Matches m " +
                 "JOIN Venues v ON m.venue_id = v.venue_id " +
+                "LEFT JOIN MatchResults mr ON m.match_id = mr.match_id " +
                 "ORDER BY m.match_date ASC";
 
             try (Statement st = conn.createStatement();
