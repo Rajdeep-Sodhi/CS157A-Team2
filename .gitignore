@@ -18,4 +18,6 @@ Thumbs.db
 # project files to tomcat script
 deploy.sh
 
+.vscode/
+
 
