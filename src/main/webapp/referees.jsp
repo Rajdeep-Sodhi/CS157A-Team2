@@ -19,7 +19,8 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<%@ include file="WEB-INF/jspf/navbar.jspf" %>
+<% request.setAttribute("currentPage", "referees"); %>
+<%@ include file="nav.jsp" %>
 <main class="container">
 
     <% if (dbError != null) { %>

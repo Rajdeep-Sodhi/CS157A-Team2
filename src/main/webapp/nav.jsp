@@ -13,6 +13,7 @@
         <li><a href="standings.jsp" class="<%= currentPage.equals("standings") ? "active" : "" %>">Standings</a></li>
         <li><a href="<%= request.getContextPath() %>/teams" class="<%= currentPage.equals("teams") ? "active" : "" %>">Teams</a></li>
         <li><a href="<%= request.getContextPath() %>/venues" class="<%= currentPage.equals("venues") ? "active" : "" %>">Venues</a></li>
+        <li><a href="<%= request.getContextPath() %>/referees" class="<%= currentPage.equals("referees") ? "active" : "" %>">Referees</a></li>
         <li><a href="predictions.jsp" class="<%= currentPage.equals("predictions") ? "active" : "" %>">Predictions</a></li>
     </ul>
     <div class="nav-auth">
