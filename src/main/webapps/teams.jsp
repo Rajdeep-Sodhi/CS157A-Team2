@@ -116,6 +116,7 @@
                             <td><%= p.get("date_of_birth") == null ? "-" : p.get("date_of_birth") %></td>
                             <% if (isAdmin) { %>
                             <td class="action-row">
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('player-edit-<%= p.get("player_id") %>').classList.toggle('hidden-form')">Edit</button>
                                 <form method="post" action="<%= ctx %>/players" style="display:inline">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="player_id" value="<%= p.get("player_id") %>">
@@ -125,6 +126,44 @@
                             </td>
                             <% } %>
                         </tr>
+                        <% if (isAdmin) { %>
+                        <tr id="player-edit-<%= p.get("player_id") %>" class="hidden-form">
+                            <td colspan="5">
+                                <form method="post" action="<%= ctx %>/players" class="form-grid" style="padding:.75rem 0;">
+                                    <input type="hidden" name="action" value="edit">
+                                    <input type="hidden" name="player_id" value="<%= p.get("player_id") %>">
+                                    <input type="hidden" name="country_name" value="<%= selectedCountry %>">
+                                    <input type="hidden" name="return_country" value="<%= selectedCountryUrl %>">
+                                    <div class="form-field">
+                                        <label>Full Name</label>
+                                        <input type="text" name="name" value="<%= p.get("name") %>" required>
+                                    </div>
+                                    <div class="form-field">
+                                        <label>Position</label>
+                                        <select name="position">
+                                            <% String currentPos = (String) p.get("position");
+                                               for (String pos : new String[]{"Forward","Midfielder","Defender","Goalkeeper"}) { %>
+                                            <option <%= pos.equals(currentPos) ? "selected" : "" %>><%= pos %></option>
+                                            <% } %>
+                                        </select>
+                                    </div>
+                                    <div class="form-field">
+                                        <label>Jersey Number</label>
+                                        <input type="number" name="jersey_number" min="1" max="99"
+                                               value="<%= p.get("jersey_number") == null ? "" : p.get("jersey_number") %>">
+                                    </div>
+                                    <div class="form-field">
+                                        <label>Date of Birth</label>
+                                        <input type="date" name="date_of_birth"
+                                               value="<%= p.get("date_of_birth") == null ? "" : p.get("date_of_birth") %>">
+                                    </div>
+                                    <div class="form-field form-actions full">
+                                        <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        <% } %>
                     <% } } if (roster == null || roster.isEmpty()) { %>
                         <tr><td colspan="<%= isAdmin ? 5 : 4 %>" class="muted">No players on this roster yet.</td></tr>
                     <% } %>
@@ -243,5 +282,6 @@
 
 </main>
 <footer class="footer">CS157A Team 2 | FIFA World Cup 2026 | SJSU</footer>
+<style>.hidden-form{display:none}</style>
 </body>
 </html>
