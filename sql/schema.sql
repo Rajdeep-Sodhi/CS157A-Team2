@@ -220,4 +220,3 @@ ALTER TABLE Users ADD COLUMN country VARCHAR(100) NULL;
 ALTER TABLE Referees ADD COLUMN fifa_certificate VARCHAR(50) NULL;
 ALTER TABLE Referees ADD COLUMN years_experience INT NULL;
 
-SELECT comment_id FROM worldcup2026.Comments
