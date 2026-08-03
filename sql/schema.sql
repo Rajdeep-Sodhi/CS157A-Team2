@@ -213,3 +213,5 @@ ALTER TABLE Matches ADD CONSTRAINT uq_venue_datetime UNIQUE (venue_id, match_dat
 -- affect any existing seeded rows.
 ALTER TABLE Users ADD COLUMN date_of_birth DATE NULL;
 ALTER TABLE Users ADD COLUMN country VARCHAR(100) NULL;
+
+SELECT comment_id FROM worldcup2026.Comments

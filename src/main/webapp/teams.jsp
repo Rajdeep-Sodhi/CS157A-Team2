@@ -8,7 +8,6 @@
     if (teams == null) teams = new ArrayList<>();
     Map<String,Object> selectedTeam = (Map<String,Object>) request.getAttribute("selectedTeam");
     List<Map<String,Object>> roster = (List<Map<String,Object>>) request.getAttribute("roster");
-    List<Map<String,Object>> unassigned = (List<Map<String,Object>>) request.getAttribute("unassignedPlayers");
     String dbError = (String) request.getAttribute("dbError");
     String ctx = request.getContextPath();
 
@@ -246,38 +245,6 @@
             <% } %>
         </div>
     </section>
-    <% } %>
-
-    <% if (unassigned != null) { %>
-    <section class="section">
-        <h2 class="section-title">Players Not on a Team</h2>
-        <table class="data-table">
-            <thead><tr><th>Name</th><th>Position</th><th>DOB</th><% if (isAdmin) { %><th></th><% } %></tr></thead>
-            <tbody>
-            <% for (Map<String,Object> p : unassigned) { %>
-                <tr>
-                    <td class="team-name"><%= p.get("name") %> <span class="badge tag-unassigned">Not on a Team</span></td>
-                    <td><%= p.get("position") == null ? "-" : p.get("position") %></td>
-                    <td><%= p.get("date_of_birth") == null ? "-" : p.get("date_of_birth") %></td>
-                    <% if (isAdmin) { %>
-                    <td class="action-row">
-                        <form method="post" action="<%= ctx %>/players" style="display:inline">
-                            <input type="hidden" name="action" value="delete">
-                            <input type="hidden" name="player_id" value="<%= p.get("player_id") %>">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this player?');">Delete</button>
-                        </form>
-                    </td>
-                    <% } %>
-                </tr>
-            <% } %>
-            <% if (unassigned.isEmpty()) { %>
-                <tr><td colspan="4" class="muted">Every player currently belongs to a team.</td></tr>
-            <% } %>
-            </tbody>
-        </table>
-    </section>
-    <% } else { %>
-    <p class="muted" style="margin-bottom:2rem;"><a href="teams?view=unassigned">View players not on a team &rarr;</a></p>
     <% } %>
 
 </main>

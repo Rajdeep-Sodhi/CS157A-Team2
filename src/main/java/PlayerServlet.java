@@ -14,9 +14,9 @@ import java.sql.SQLException;
 /**
  * PlayerServlet.java
  * FR: "Team and Players Management" - admin add/edit/delete for player rows.
- * Every player must belong to a team (enforced by requiring a country
- * on add), except players left over from a deleted team, which stay
- * unassigned.
+ * Every player must belong to a team; deleting a team deletes its
+ * players outright (see TeamDAO.delete()), so a player row here
+ * always has a country.
  */
 @WebServlet("/players")
 public class PlayerServlet extends HttpServlet {
@@ -97,16 +97,16 @@ public class PlayerServlet extends HttpServlet {
                 return base;
             }
         }
-        return base + "?view=unassigned";
+        return base;
     }
 
     private void forwardWithError(HttpServletRequest req, HttpServletResponse resp,
                                    String countryName, String message) throws IOException {
         String base = req.getContextPath() + "/teams";
         String qs = (countryName != null && !countryName.isBlank())
-            ? "?country=" + URLEncoder.encode(countryName, "UTF-8")
-            : "?view=unassigned";
-        resp.sendRedirect(base + qs + "&error=" + URLEncoder.encode(message, "UTF-8"));
+            ? "?country=" + URLEncoder.encode(countryName, "UTF-8") + "&error=" + URLEncoder.encode(message, "UTF-8")
+            : "?error=" + URLEncoder.encode(message, "UTF-8");
+        resp.sendRedirect(base + qs);
     }
 
     private Integer parseIntOrNull(String value) {

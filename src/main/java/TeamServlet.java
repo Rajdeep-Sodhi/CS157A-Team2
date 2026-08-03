@@ -49,10 +49,6 @@ public class TeamServlet extends HttpServlet {
                     req.setAttribute("roster", playerDAO.listByTeam(country));
                 }
             }
-
-            if ("unassigned".equals(req.getParameter("view"))) {
-                req.setAttribute("unassignedPlayers", playerDAO.listUnassigned());
-            }
         } catch (SQLException e) {
             req.setAttribute("dbError", e.getMessage());
         }
