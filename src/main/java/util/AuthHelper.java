@@ -1,20 +1,16 @@
 package util;
-
 import model.User;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import java.io.IOException;
 
 /**
  * AuthHelper.java
  * Shared role-checking logic used by the admin-only servlets
- * (TeamServlet, PlayerServlet, MatchServlet, VenueServlet).
+ * (TeamServlet, PlayerServlet, MatchServlet, VenueServlet, RefereeServlet).
  */
 public class AuthHelper {
-
     public static User currentUser(HttpServletRequest req) {
         HttpSession session = req.getSession(false);
         if (session == null) return null;
@@ -22,8 +18,19 @@ public class AuthHelper {
     }
 
     public static boolean isAdmin(HttpServletRequest req) {
+        //some servlets store a full User object in "authUser"
         User user = currentUser(req);
-        return user != null && user.isAdmin();
+        if (user != null) {
+            return user.isAdmin();
+        }
+
+        //login servlet actually stores the role as a plain string in "userRole"
+        //check that too so admin pages work no matter which login flow set the session
+        HttpSession session = req.getSession(false);
+        if (session == null) return false;
+
+        Object role = session.getAttribute("userRole");
+        return role != null && "admin".equalsIgnoreCase(role.toString());
     }
 
     /**

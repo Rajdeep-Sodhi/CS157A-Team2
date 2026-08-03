@@ -9,6 +9,7 @@
         <li><a href="<%= request.getContextPath() %>/matches.jsp" class="<%= currentPage.endsWith("/matches.jsp") ? "active" : "" %>">Matches</a></li>
         <li><a href="<%= request.getContextPath() %>/standings.jsp" class="<%= currentPage.endsWith("/standings.jsp") ? "active" : "" %>">Standings</a></li>
         <li><a href="<%= request.getContextPath() %>/teams.jsp" class="<%= currentPage.endsWith("/teams.jsp") ? "active" : "" %>">Teams</a></li>
+        <li><a href="<%= request.getContextPath() %>/referees" class="<%= currentPage.endsWith("/referees") ? "active" : "" %>">Referees</a></li>
         <li><a href="<%= request.getContextPath() %>/predictions.jsp" class="<%= currentPage.endsWith("/predictions.jsp") ? "active" : "" %>">Predictions</a></li>
     </ul>
     <div class="nav-auth">
