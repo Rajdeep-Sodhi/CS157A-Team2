@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*, model.Referee, model.MatchAssignment"%>
+<%@ page import="java.util.*, model.User, model.Referee, model.MatchAssignment"%>
 <%
-    Object userRole = session.getAttribute("userRole");
-    boolean isAdmin = userRole != null && userRole.toString().equalsIgnoreCase("admin");
+    User authUser = (User) session.getAttribute("authUser");
+    boolean isAdmin = authUser != null && authUser.isAdmin();
 
     List<Referee> referees = (List<Referee>) request.getAttribute("referees");
     if (referees == null) referees = new ArrayList<>();

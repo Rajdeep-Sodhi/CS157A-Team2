@@ -10,6 +10,7 @@ import java.util.List;
 //handles referee management
 //includes add, edit, delete, and assign referees
 //and checking that a referee isn't from the same country as either team
+//and checking that a referee isn't double-booked at the same time
 public class RefereeDAO
 {
     //load all referees
@@ -245,8 +246,43 @@ public class RefereeDAO
         return matchList;
     }
 
+    //check if referee already has another match at the same date/time
+    public boolean hasScheduleConflict(int refereeId, int matchId)
+    {
+        boolean conflict = false;
+        String sql = "SELECT COUNT(*) AS total FROM Matches m1 " +
+                     "JOIN Matches m2 ON m1.match_date = m2.match_date " +
+                     "WHERE m1.match_id = ? " +
+                     "AND m2.match_id != m1.match_id " +
+                     "AND m2.referee_id = ?";
+        try
+        {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, matchId);
+            ps.setInt(2, refereeId);
+
+            ResultSet rs = ps.executeQuery();
+            if(rs.next())
+            {
+                conflict = rs.getInt("total") > 0;
+            }
+
+            rs.close();
+            ps.close();
+            conn.close();
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return conflict;
+    }
+
     //check if referee can be assigned to this match
     //referee cant have the same country as either team
+    //referee also cant already be busy with another match at the same time
     public String checkRefereeConflict(int refereeId, int matchId)
     {
         Referee referee = getRefereeById(refereeId);
@@ -285,6 +321,13 @@ public class RefereeDAO
         {
             return "This referee cannot officiate this match.";
         }
+
+        //check if referee is already assigned to another match at the same time
+        if(hasScheduleConflict(refereeId, matchId))
+        {
+            return "This referee is already assigned to another match at the same time.";
+        }
+
         return null;
     }
 
