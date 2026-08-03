@@ -47,6 +47,9 @@ public class LoginServlet extends HttpServlet {
 
             HttpSession session = req.getSession(true);
             session.setAttribute("authUser", user);
+            // Also set "userId" - the Comments/Predictions features check this key
+            // for login state rather than "authUser".
+            session.setAttribute("userId", user.getUserId());
 
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (SQLException e) {

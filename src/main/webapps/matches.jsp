@@ -3,6 +3,7 @@
 <%
     User authUser = (User) session.getAttribute("authUser");
     boolean isAdmin = authUser != null && authUser.isAdmin();
+    boolean isLoggedIn = authUser != null;
 
     List<Map<String,Object>> matches = (List<Map<String,Object>>) request.getAttribute("matches");
     if (matches == null) matches = new ArrayList<>();
@@ -10,7 +11,11 @@
     if (groupTeams == null) groupTeams = new ArrayList<>();
     List<Map<String,Object>> venues = (List<Map<String,Object>>) request.getAttribute("venues");
     if (venues == null) venues = new ArrayList<>();
+    Map<Integer,List<Map<String,Object>>> commentsByMatch =
+        (Map<Integer,List<Map<String,Object>>>) request.getAttribute("commentsByMatch");
+    if (commentsByMatch == null) commentsByMatch = new HashMap<>();
     String dbError = (String) request.getAttribute("dbError");
+    String commentStatus = request.getParameter("comment");
     String ctx = request.getContextPath();
 %>
 <!DOCTYPE html>
@@ -29,12 +34,18 @@
     <div class="db-error">Error: <%= dbError %></div>
     <% } %>
 
+    <% if ("saved".equals(commentStatus)) { %>
+    <div class="form-message form-success">Your comment was posted.</div>
+    <% } else if ("invalid".equals(commentStatus)) { %>
+    <div class="form-message form-error">Comment couldn't be posted - check it's between 1 and 250 characters.</div>
+    <% } %>
+
     <section class="section">
         <h2 class="section-title">Match Schedule</h2>
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>Date</th><th>Stage</th><th>Home</th><th>Score</th><th>Away</th><th>Venue</th><th>Status</th>
+                    <th>Date</th><th>Stage</th><th>Home</th><th>Score</th><th>Away</th><th>Venue</th><th>Status</th><th></th>
                     <% if (isAdmin) { %><th></th><% } %>
                 </tr>
             </thead>
@@ -48,7 +59,7 @@
                 String team1Country = (String) m.get("team1_country_name");
                 String team2Country = (String) m.get("team2_country_name");
             %>
-                <tr>
+                <tr id="match-<%= m.get("match_id") %>">
                     <td><%= rawDate == null ? "-" : rawDate.substring(0, 16) %></td>
                     <td><span class="badge"><%= m.get("stage") %></span></td>
                     <td class="team-name"><%= team1Country %></td>
@@ -59,15 +70,58 @@
                     <td class="team-name"><%= team2Country %></td>
                     <td><%= m.get("stadium_name") %>, <%= m.get("city") %></td>
                     <td><span class="status <%= played ? "status-finished" : "status-upcoming" %>"><%= played ? "Finished" : "Upcoming" %></span></td>
+                    <%
+                        List<Map<String,Object>> matchComments = commentsByMatch.get((Integer) m.get("match_id"));
+                        int commentCount = matchComments == null ? 0 : matchComments.size();
+                    %>
+                    <td class="action-row">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('comments-<%= m.get("match_id") %>').classList.toggle('hidden-form')">Comments (<%= commentCount %>)</button>
+                    </td>
                     <% if (isAdmin) { %>
                     <td class="action-row">
                         <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('edit-<%= m.get("match_id") %>').classList.toggle('hidden-form')">Manage</button>
                     </td>
                     <% } %>
                 </tr>
+                <tr id="comments-<%= m.get("match_id") %>" class="hidden-form">
+                    <td colspan="<%= isAdmin ? 9 : 8 %>">
+                        <div class="comments-panel">
+                            <div class="comment-list">
+                            <% if (matchComments != null) { for (Map<String,Object> c : matchComments) { %>
+                                <div class="comment-item">
+                                    <div class="comment-meta">
+                                        <span class="comment-author"><%= c.get("commenter_name") %></span>
+                                        <span>
+                                            <%= c.get("created_at") == null ? "" : ((String) c.get("created_at")).substring(0, 16) %>
+                                            <% if (Boolean.TRUE.equals(c.get("is_flagged"))) { %><span class="comment-flagged">Flagged</span><% } %>
+                                        </span>
+                                    </div>
+                                    <div class="comment-content"><%= c.get("content") %></div>
+                                </div>
+                            <% } }
+                               if (commentCount == 0) { %>
+                                <p class="empty-state">No comments yet.</p>
+                            <% } %>
+                            </div>
+                            <% if (isLoggedIn) { %>
+                            <form method="post" action="<%= ctx %>/comment" class="comment-form">
+                                <input type="hidden" name="matchId" value="<%= m.get("match_id") %>">
+                                <textarea name="content" maxlength="250" placeholder="Share your thoughts on this match (250 char max)..." required></textarea>
+                                <div class="form-actions" style="margin-top:.5rem;">
+                                    <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
+                                </div>
+                            </form>
+                            <% } else { %>
+                            <p class="comment-signin-notice">
+                                <a href="<%= ctx %>/login">Sign in</a> to leave a comment.
+                            </p>
+                            <% } %>
+                        </div>
+                    </td>
+                </tr>
                 <% if (isAdmin) { %>
                 <tr id="edit-<%= m.get("match_id") %>" class="hidden-form">
-                    <td colspan="8">
+                    <td colspan="9">
                         <div class="two-col" style="padding: 1rem 0;">
                             <form method="post" action="<%= ctx %>/matches" class="form-grid">
                                 <input type="hidden" name="action" value="edit">
@@ -139,7 +193,7 @@
                 <% } %>
             <% } %>
             <% if (matches.isEmpty()) { %>
-                <tr><td colspan="<%= isAdmin ? 8 : 7 %>" class="muted">No matches scheduled yet.</td></tr>
+                <tr><td colspan="<%= isAdmin ? 9 : 8 %>" class="muted">No matches scheduled yet.</td></tr>
             <% } %>
             </tbody>
         </table>
@@ -204,5 +258,14 @@
 </main>
 <footer class="footer">CS157A Team 2 | FIFA World Cup 2026 | SJSU</footer>
 <style>.hidden-form{display:none}</style>
+<script>
+    // Landing here via a #match-X link (e.g. right after posting a comment)
+    // should show the comments panel, not just scroll to a collapsed row.
+    if (window.location.hash && window.location.hash.startsWith('#match-')) {
+        var matchId = window.location.hash.replace('#match-', '');
+        var panel = document.getElementById('comments-' + matchId);
+        if (panel) panel.classList.remove('hidden-form');
+    }
+</script>
 </body>
 </html>

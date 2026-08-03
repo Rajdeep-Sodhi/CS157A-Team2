@@ -1,3 +1,4 @@
+import dao.CommentDAO;
 import dao.MatchDAO;
 import dao.TeamDAO;
 import dao.VenueDAO;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +22,8 @@ import java.util.Map;
  * FR: "Matches Management" - schedule listing for everyone,
  * create/edit/delete/result-entry restricted to admins.
  * Teams are identified by country name (no team_id in this schema).
+ * Also loads comments per match for the "Commenting/Chatting" FR
+ * (posting is handled by CommentServlet).
  */
 @WebServlet("/matches")
 public class MatchServlet extends HttpServlet {
@@ -27,6 +31,7 @@ public class MatchServlet extends HttpServlet {
     private final MatchDAO matchDAO = new MatchDAO();
     private final TeamDAO teamDAO = new TeamDAO();
     private final VenueDAO venueDAO = new VenueDAO();
+    private final CommentDAO commentDAO = new CommentDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -42,6 +47,12 @@ public class MatchServlet extends HttpServlet {
             req.setAttribute("matches", matches);
             req.setAttribute("groupTeams", teamDAO.listGroupAssignedTeams());
             req.setAttribute("venues", venueDAO.listAll());
+
+            List<Integer> matchIds = new ArrayList<>();
+            for (Map<String, Object> m : matches) {
+                matchIds.add((Integer) m.get("match_id"));
+            }
+            req.setAttribute("commentsByMatch", commentDAO.listByMatchIds(matchIds));
         } catch (SQLException e) {
             req.setAttribute("dbError", e.getMessage());
         }

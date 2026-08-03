@@ -22,7 +22,8 @@ public class PredictionServlet extends HttpServlet {
 
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+            // Was "/login.jsp" - now goes through LoginServlet ("/login").
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 

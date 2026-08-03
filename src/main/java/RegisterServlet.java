@@ -54,6 +54,7 @@ public class RegisterServlet extends HttpServlet {
 
             HttpSession session = req.getSession(true);
             session.setAttribute("authUser", user);
+            session.setAttribute("userId", user.getUserId());
 
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (SQLException e) {

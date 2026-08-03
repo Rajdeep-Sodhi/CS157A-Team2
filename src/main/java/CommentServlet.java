@@ -22,7 +22,9 @@ public class CommentServlet extends HttpServlet {
 
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+            // Was "/login.jsp" - now goes through LoginServlet ("/login")
+            // for consistency with the rest of the app.
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
@@ -30,14 +32,18 @@ public class CommentServlet extends HttpServlet {
         try {
             matchId = Integer.parseInt(req.getParameter("matchId"));
         } catch (NumberFormatException e) {
-            resp.sendRedirect(req.getContextPath() + "/matches.jsp?comment=invalid");
+            // Was "/matches.jsp" - that's the raw file, which depends entirely
+            // on MatchServlet setting its request attributes. Hitting it
+            // directly (bypassing the servlet) always showed an empty
+            // "No matches scheduled yet" page, even with real data in the DB.
+            resp.sendRedirect(req.getContextPath() + "/matches?comment=invalid");
             return;
         }
 
         String content = req.getParameter("content");
         if (content == null || content.trim().isEmpty() || content.length() > 250) {
             resp.sendRedirect(req.getContextPath()
-                + "/matches.jsp?comment=invalid#match-" + matchId);
+                + "/matches?comment=invalid#match-" + matchId);
             return;
         }
 
@@ -53,7 +59,7 @@ public class CommentServlet extends HttpServlet {
             matchCheck.setInt(1, matchId);
             try (ResultSet rs = matchCheck.executeQuery()) {
                 if (!rs.next()) {
-                    resp.sendRedirect(req.getContextPath() + "/matches.jsp?comment=invalid");
+                    resp.sendRedirect(req.getContextPath() + "/matches?comment=invalid");
                     return;
                 }
             }
@@ -66,10 +72,10 @@ public class CommentServlet extends HttpServlet {
             }
 
             resp.sendRedirect(req.getContextPath()
-                + "/matches.jsp?comment=saved#match-" + matchId);
+                + "/matches?comment=saved#match-" + matchId);
         } catch (SQLException e) {
             req.setAttribute("commentError", "Unable to post comment: " + e.getMessage());
-            req.getRequestDispatcher("/matches.jsp").forward(req, resp);
+            req.getRequestDispatcher("/matches").forward(req, resp);
         }
     }
 }
