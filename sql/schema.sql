@@ -214,4 +214,7 @@ ALTER TABLE Matches ADD CONSTRAINT uq_venue_datetime UNIQUE (venue_id, match_dat
 ALTER TABLE Users ADD COLUMN date_of_birth DATE NULL;
 ALTER TABLE Users ADD COLUMN country VARCHAR(100) NULL;
 
-SELECT comment_id FROM worldcup2026.Comments
+-- Migration for Referee Management
+-- Referees table originally only had (referee_id, country_name, name)
+ALTER TABLE Referees ADD COLUMN fifa_certificate VARCHAR(50) NULL;
+ALTER TABLE Referees ADD COLUMN years_experience INT NULL;
