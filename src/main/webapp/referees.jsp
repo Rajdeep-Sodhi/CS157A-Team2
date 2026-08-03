@@ -148,6 +148,13 @@
                             </select>
                             <button type="submit" class="btn btn-sm btn-primary">Assign</button>
                         </form>
+                        <% if (m.getRefereeId() != 0) { %>
+                        <form method="post" action="<%= ctx %>/referees" style="display:inline">
+                            <input type="hidden" name="action" value="unassign">
+                            <input type="hidden" name="match_id" value="<%= m.getMatchId() %>">
+                            <button type="submit" class="btn btn-sm btn-secondary">Unassign</button>
+                        </form>
+                        <% } %>
                     </td>
                 </tr>
             <% } %>
