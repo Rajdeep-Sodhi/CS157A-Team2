@@ -25,10 +25,10 @@
         try (Connection conn = DBConnection.getConnection()) {
             // "Upcoming" here means "no result recorded yet" (mr.result_id
             // IS NULL), not "before kickoff time" - see the comment in
-            // PredictionServlet.java for why (including where the tested,
-            // ready-to-swap-in version lives - /matchuptodatereference).
-            // Same reasoning applies to every "WHERE mr.result_id IS NULL"
-            // query in this file.
+            // PredictionServlet.java for why. Same reasoning applies to
+            // every "WHERE mr.result_id IS NULL" query in this file.
+            // *** TEMPORARY TEST BUILD *** - AND m.match_date > NOW() added
+            // below to match PredictionServlet.java's test-build lock.
             String matchSql =
                 "SELECT m.match_id, m.match_date, m.stage, " +
                 "m.team1_country_name AS team1, m.team2_country_name AS team2, " +
@@ -37,7 +37,7 @@
                 "JOIN Venues v ON m.venue_id = v.venue_id " +
                 "LEFT JOIN MatchResults mr ON mr.match_id = m.match_id " +
                 "LEFT JOIN Predictions p ON p.match_id = m.match_id AND p.user_id = ? " +
-                "WHERE mr.result_id IS NULL ORDER BY m.match_date ASC";
+                "WHERE mr.result_id IS NULL AND m.match_date > NOW() ORDER BY m.match_date ASC";
             try (PreparedStatement ps = conn.prepareStatement(matchSql)) {
                 ps.setInt(1, predictionUserId == null ? -1 : predictionUserId);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -63,7 +63,7 @@
                 "FROM Predictions p JOIN Users u ON u.user_id = p.user_id " +
                 "JOIN Matches m ON m.match_id = p.match_id " +
                 "LEFT JOIN MatchResults mr ON mr.match_id = m.match_id " +
-                "WHERE mr.result_id IS NULL ORDER BY u.name ASC";
+                "WHERE mr.result_id IS NULL AND m.match_date > NOW() ORDER BY u.name ASC";
             try (PreparedStatement ps = conn.prepareStatement(communitySql);
                  ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

@@ -1,5 +1,4 @@
 # CS157A - Team 2: FIFA World Cup 2026 Web App
-Team: Rajdeep Sodhi, Anthony Moll, and Thi Ngoc Duyen Lam
 
 This is a Java web application (JSP + Servlets) backed by a MySQL database, built for the CS157A course project. It implements team, player, match, venue, and referee management, along with user registration, login, comments, and predictions.
 
@@ -106,6 +105,7 @@ sql/seed_data.sql      Sample data for testing
 
 ## Notes
 
+- `/matchuptodatereference` contains a tested, working version of strict kickoff-time prediction locking (`AND m.match_date > NOW()`), not currently active because the seed data's match dates are already in the past relative to real time - see the comment in `PredictionServlet.java` for the full explanation. Swap those files in if you want the literal FR behavior instead.
 - A team is identified by its country name rather than a numeric ID, matching the ERD.
 - Deleting a team also deletes its players, along with their recorded stats and match events.
 - A stadium cannot be double-booked for the same date and time; this is enforced both in the application code and with a database constraint.
