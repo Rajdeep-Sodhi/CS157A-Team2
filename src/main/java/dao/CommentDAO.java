@@ -64,4 +64,109 @@ public class CommentDAO {
         }
         return result;
     }
+
+    /**
+     * Casts, changes, or removes a user's vote on a comment, keeping
+     * Comments.upvote_count in sync as a running net total.
+     * Clicking the same direction again removes the vote (toggle off);
+     * clicking the opposite direction switches it; voting fresh adds it.
+     * Returns the comment's new net vote count.
+     */
+    public int castVote(int commentId, int userId, int voteValue) throws SQLException {
+        try (Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                Integer existingValue = null;
+                try (PreparedStatement check = conn.prepareStatement(
+                        "SELECT vote_value FROM CommentVotes WHERE comment_id = ? AND user_id = ?")) {
+                    check.setInt(1, commentId);
+                    check.setInt(2, userId);
+                    try (ResultSet rs = check.executeQuery()) {
+                        if (rs.next()) existingValue = rs.getInt("vote_value");
+                    }
+                }
+
+                int delta;
+                if (existingValue == null) {
+                    try (PreparedStatement insert = conn.prepareStatement(
+                            "INSERT INTO CommentVotes (comment_id, user_id, vote_value) VALUES (?, ?, ?)")) {
+                        insert.setInt(1, commentId);
+                        insert.setInt(2, userId);
+                        insert.setInt(3, voteValue);
+                        insert.executeUpdate();
+                    }
+                    delta = voteValue;
+                } else if (existingValue == voteValue) {
+                    try (PreparedStatement delete = conn.prepareStatement(
+                            "DELETE FROM CommentVotes WHERE comment_id = ? AND user_id = ?")) {
+                        delete.setInt(1, commentId);
+                        delete.setInt(2, userId);
+                        delete.executeUpdate();
+                    }
+                    delta = -voteValue;
+                } else {
+                    try (PreparedStatement update = conn.prepareStatement(
+                            "UPDATE CommentVotes SET vote_value = ? WHERE comment_id = ? AND user_id = ?")) {
+                        update.setInt(1, voteValue);
+                        update.setInt(2, commentId);
+                        update.setInt(3, userId);
+                        update.executeUpdate();
+                    }
+                    delta = voteValue - existingValue;
+                }
+
+                try (PreparedStatement updateCount = conn.prepareStatement(
+                        "UPDATE Comments SET upvote_count = upvote_count + ? WHERE comment_id = ?")) {
+                    updateCount.setInt(1, delta);
+                    updateCount.setInt(2, commentId);
+                    updateCount.executeUpdate();
+                }
+
+                int newCount;
+                try (PreparedStatement getCount = conn.prepareStatement(
+                        "SELECT upvote_count FROM Comments WHERE comment_id = ?")) {
+                    getCount.setInt(1, commentId);
+                    try (ResultSet rs = getCount.executeQuery()) {
+                        newCount = rs.next() ? rs.getInt("upvote_count") : 0;
+                    }
+                }
+
+                conn.commit();
+                return newCount;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
+
+    /** Batch fetch of one user's votes across a set of comments, so the page can show their current vote state. */
+    public Map<Integer, Integer> getUserVotes(int userId, List<Integer> commentIds) throws SQLException {
+        Map<Integer, Integer> result = new LinkedHashMap<>();
+        if (commentIds == null || commentIds.isEmpty()) return result;
+
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < commentIds.size(); i++) {
+            if (i > 0) placeholders.append(",");
+            placeholders.append("?");
+        }
+
+        String sql = "SELECT comment_id, vote_value FROM CommentVotes " +
+                     "WHERE user_id = ? AND comment_id IN (" + placeholders + ")";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            for (int i = 0; i < commentIds.size(); i++) {
+                ps.setInt(i + 2, commentIds.get(i));
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    result.put(rs.getInt("comment_id"), rs.getInt("vote_value"));
+                }
+            }
+        }
+        return result;
+    }
 }

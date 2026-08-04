@@ -129,6 +129,16 @@ public class UserDAO {
         }
     }
 
+    /** Used before demoting an admin, so the system can never end up with zero admins. */
+    public int countAdmins() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Users WHERE role = 'admin'";
+        try (Connection conn = DBConnection.getConnection();
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            return rs.next() ? rs.getInt(1) : 0;
+        }
+    }
+
     public void deleteUser(int userId) throws SQLException {
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);

@@ -58,15 +58,32 @@ public class UsersServlet extends HttpServlet {
             if (targetUser == null) {
                 throw new IllegalStateException("That user no longer exists.");
             }
-            if (targetUser.isAdmin()) {
-                throw new IllegalStateException("Admin accounts cannot be edited or removed.");
-            }
 
             switch (action == null ? "" : action) {
                 case "promote":
+                    if (targetUser.isAdmin()) {
+                        throw new IllegalStateException("This user is already an admin.");
+                    }
                     userDAO.setRole(userId, "admin");
                     break;
+                case "demote":
+                    if (!targetUser.isAdmin()) {
+                        throw new IllegalStateException("This user is not an admin.");
+                    }
+                    User self = (User) req.getSession().getAttribute("authUser");
+                    if (self != null && self.getUserId() == userId) {
+                        throw new IllegalStateException("You can't remove your own admin access.");
+                    }
+                    if (userDAO.countAdmins() <= 2) {
+                        throw new IllegalStateException(
+                            "There must be at least 2 admins at all times. Promote another user to admin first.");
+                    }
+                    userDAO.setRole(userId, "fan");
+                    break;
                 case "delete":
+                    if (targetUser.isAdmin()) {
+                        throw new IllegalStateException("Admin accounts cannot be deleted.");
+                    }
                     userDAO.deleteUser(userId);
                     break;
                 default:

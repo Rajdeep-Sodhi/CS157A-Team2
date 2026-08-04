@@ -26,7 +26,7 @@
 
     <section class="section">
         <h2 class="section-title">Users</h2>
-        <p class="muted">Admin accounts are protected and cannot be edited or removed.</p>
+        <p class="muted">Admin accounts cannot be deleted, and you cannot remove your own admin access.</p>
 
         <table class="data-table">
             <thead>
@@ -50,6 +50,7 @@
                         </span>
                     </td>
                     <td class="action-row">
+                        <% boolean isSelf = authUser != null && authUser.getUserId() == user.getUserId(); %>
                         <% if (!user.isAdmin()) { %>
                         <form method="post" action="<%= ctx %>/users" style="display:inline-block; margin-right:.5rem;">
                             <input type="hidden" name="action" value="promote">
@@ -61,8 +62,14 @@
                             <input type="hidden" name="user_id" value="<%= user.getUserId() %>">
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this user and all of their comments/predictions?');">Delete</button>
                         </form>
+                        <% } else if (isSelf) { %>
+                        <span class="muted">You (protected)</span>
                         <% } else { %>
-                        <span class="muted">Protected</span>
+                        <form method="post" action="<%= ctx %>/users" style="display:inline-block;">
+                            <input type="hidden" name="action" value="demote">
+                            <input type="hidden" name="user_id" value="<%= user.getUserId() %>">
+                            <button type="submit" class="btn btn-sm btn-secondary" onclick="return confirm('Remove admin access from this user?');">Remove Admin</button>
+                        </form>
                         <% } %>
                     </td>
                 </tr>

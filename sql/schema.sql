@@ -217,3 +217,17 @@ ALTER TABLE Matches ADD CONSTRAINT uq_venue_datetime UNIQUE (venue_id, match_dat
 -- affect any existing seeded rows.
 ALTER TABLE Users ADD COLUMN date_of_birth DATE NULL;
 ALTER TABLE Users ADD COLUMN country VARCHAR(100) NULL;
+
+-- Tracks each user's vote on each comment (1 = upvote, -1 = downvote),
+-- so a user can only vote once per comment (and can change or remove
+-- their vote by clicking again). Comments.upvote_count is kept as a
+-- running net total so it can be displayed without summing this
+-- table on every page load.
+CREATE TABLE CommentVotes (
+    comment_id INT NOT NULL,
+    user_id INT NOT NULL,
+    vote_value INT NOT NULL,
+    PRIMARY KEY (comment_id, user_id),
+    FOREIGN KEY (comment_id) REFERENCES Comments(comment_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);

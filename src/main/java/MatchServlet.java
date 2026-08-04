@@ -52,7 +52,19 @@ public class MatchServlet extends HttpServlet {
             for (Map<String, Object> m : matches) {
                 matchIds.add((Integer) m.get("match_id"));
             }
-            req.setAttribute("commentsByMatch", commentDAO.listByMatchIds(matchIds));
+            Map<Integer, List<Map<String, Object>>> commentsByMatch = commentDAO.listByMatchIds(matchIds);
+            req.setAttribute("commentsByMatch", commentsByMatch);
+
+            Object userIdAttr = req.getSession(true).getAttribute("userId");
+            if (userIdAttr != null) {
+                List<Integer> commentIds = new ArrayList<>();
+                for (List<Map<String, Object>> comments : commentsByMatch.values()) {
+                    for (Map<String, Object> c : comments) {
+                        commentIds.add((Integer) c.get("comment_id"));
+                    }
+                }
+                req.setAttribute("userVotes", commentDAO.getUserVotes((Integer) userIdAttr, commentIds));
+            }
         } catch (SQLException e) {
             req.setAttribute("dbError", e.getMessage());
         }

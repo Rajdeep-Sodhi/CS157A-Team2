@@ -30,14 +30,32 @@ public class DeleteCommentServlet extends HttpServlet {
             return;
         }
 
-        String sql = "DELETE FROM Comments WHERE comment_id = ? AND match_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, commentId);
-            ps.setInt(2, matchId);
-            int deleted = ps.executeUpdate();
-            String status = deleted == 1 ? "deleted" : "delete-invalid";
-            resp.sendRedirect(req.getContextPath() + "/matches?comment=" + status + "#match-" + matchId);
+        try (Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                try (PreparedStatement delVotes = conn.prepareStatement(
+                        "DELETE FROM CommentVotes WHERE comment_id = ?")) {
+                    delVotes.setInt(1, commentId);
+                    delVotes.executeUpdate();
+                }
+
+                int deleted;
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "DELETE FROM Comments WHERE comment_id = ? AND match_id = ?")) {
+                    ps.setInt(1, commentId);
+                    ps.setInt(2, matchId);
+                    deleted = ps.executeUpdate();
+                }
+
+                conn.commit();
+                String status = deleted == 1 ? "deleted" : "delete-invalid";
+                resp.sendRedirect(req.getContextPath() + "/matches?comment=" + status + "#match-" + matchId);
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
         } catch (SQLException e) {
             req.setAttribute("dbError", "Unable to delete comment: " + e.getMessage());
             req.getRequestDispatcher("/matches").forward(req, resp);

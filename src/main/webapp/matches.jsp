@@ -14,6 +14,8 @@
     Map<Integer,List<Map<String,Object>>> commentsByMatch =
         (Map<Integer,List<Map<String,Object>>>) request.getAttribute("commentsByMatch");
     if (commentsByMatch == null) commentsByMatch = new HashMap<>();
+    Map<Integer,Integer> userVotes = (Map<Integer,Integer>) request.getAttribute("userVotes");
+    if (userVotes == null) userVotes = new HashMap<>();
     String dbError = (String) request.getAttribute("dbError");
     String commentStatus = request.getParameter("comment");
     String flagStatus = request.getParameter("flag");
@@ -110,6 +112,30 @@
                                         </span>
                                     </div>
                                     <div class="comment-content"><%= c.get("content") %></div>
+                                    <%
+                                        Integer commentId = (Integer) c.get("comment_id");
+                                        Integer myVote = userVotes.get(commentId);
+                                        int netVotes = (Integer) c.get("upvote_count");
+                                    %>
+                                    <div class="comment-vote-row">
+                                        <% if (isLoggedIn) { %>
+                                        <form method="post" action="<%= ctx %>/comment-vote" style="display:inline">
+                                            <input type="hidden" name="comment_id" value="<%= commentId %>">
+                                            <input type="hidden" name="match_id" value="<%= m.get("match_id") %>">
+                                            <input type="hidden" name="direction" value="up">
+                                            <button type="submit" class="vote-btn <%= (myVote != null && myVote == 1) ? "vote-btn-active" : "" %>" title="Upvote">&#9650;</button>
+                                        </form>
+                                        <% } %>
+                                        <span class="vote-count"><%= netVotes %></span>
+                                        <% if (isLoggedIn) { %>
+                                        <form method="post" action="<%= ctx %>/comment-vote" style="display:inline">
+                                            <input type="hidden" name="comment_id" value="<%= commentId %>">
+                                            <input type="hidden" name="match_id" value="<%= m.get("match_id") %>">
+                                            <input type="hidden" name="direction" value="down">
+                                            <button type="submit" class="vote-btn <%= (myVote != null && myVote == -1) ? "vote-btn-active" : "" %>" title="Downvote">&#9660;</button>
+                                        </form>
+                                        <% } %>
+                                    </div>
                                     <% if (isAdmin) { %>
                                     <form method="post" action="<%= ctx %>/delete-comment" class="comment-delete-form">
                                         <input type="hidden" name="commentId" value="<%= c.get("comment_id") %>">
