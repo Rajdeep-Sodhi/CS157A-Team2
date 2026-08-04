@@ -105,7 +105,7 @@ sql/seed_data.sql      Sample data for testing
 
 ## Notes
 
-- SQL logic and structure exists in DAO files, schema, ServerlerFiles (DeleteComment) and seed for data
+- SQL logic and structure exists in DAO files, schema, ServerletFiles (DeleteComment) and seed for data
 - `/matchuptodatereference` contains a tested, working version of strict kickoff-time prediction locking (`AND m.match_date > NOW()`), not currently active because the seed data's match dates are already in the past relative to real time - see the comment in `PredictionServlet.java` for the full explanation. Swap those files in if you want the literal FR behavior instead. If testing, BE SURE to change file names.
 - A team is identified by its country name rather than a numeric ID, matching the ERD.
 - Deleting a team also deletes its players, along with their recorded stats and match events.
