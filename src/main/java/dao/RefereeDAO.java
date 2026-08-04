@@ -17,7 +17,7 @@ public class RefereeDAO
     public List<Referee> getAllReferees()
     {
         List<Referee> refereeList = new ArrayList<>();
-        String sql = "SELECT * FROM Referees ORDER BY referee_id";
+        String sql = "SELECT referee_id, name, country_name FROM Referees ORDER BY referee_id";
         try
         {
             Connection conn = DBConnection.getConnection();
@@ -31,8 +31,6 @@ public class RefereeDAO
                 referee.setRefereeId(rs.getInt("referee_id"));
                 referee.setName(rs.getString("name"));
                 referee.setCountryName(rs.getString("country_name"));
-                referee.setFifaCertificate(rs.getString("fifa_certificate"));
-                referee.setYearsExperience(rs.getInt("years_experience"));
 
                 //add referee to the list
                 refereeList.add(referee);
@@ -53,7 +51,7 @@ public class RefereeDAO
     public Referee getRefereeById(int refereeId)
     {
         Referee referee = null;
-        String sql = "SELECT * FROM Referees WHERE referee_id = ?";
+        String sql = "SELECT referee_id, name, country_name FROM Referees WHERE referee_id = ?";
 
         try
         {
@@ -71,8 +69,6 @@ public class RefereeDAO
                 referee.setRefereeId(rs.getInt("referee_id"));
                 referee.setName(rs.getString("name"));
                 referee.setCountryName(rs.getString("country_name"));
-                referee.setFifaCertificate(rs.getString("fifa_certificate"));
-                referee.setYearsExperience(rs.getInt("years_experience"));
             }
             rs.close();
             ps.close();
@@ -88,7 +84,7 @@ public class RefereeDAO
     //save a new referee
     public boolean addReferee(Referee referee)
     {
-        String sql = "INSERT INTO Referees(name, country_name, fifa_certificate, years_experience) VALUES(?, ?, ?, ?)";
+        String sql = "INSERT INTO Referees(name, country_name) VALUES(?, ?)";
         try
         {
             Connection conn = DBConnection.getConnection();
@@ -97,8 +93,6 @@ public class RefereeDAO
             //save referee info
             ps.setString(1, referee.getName());
             ps.setString(2, referee.getCountryName());
-            ps.setString(3, referee.getFifaCertificate());
-            ps.setInt(4, referee.getYearsExperience());
             int rows = ps.executeUpdate();
 
             ps.close();
@@ -115,7 +109,7 @@ public class RefereeDAO
     //update referee info
     public boolean updateReferee(Referee referee)
     {
-        String sql = "UPDATE Referees SET name = ?, country_name = ?, fifa_certificate = ?, years_experience = ? WHERE referee_id = ?";
+        String sql = "UPDATE Referees SET name = ?, country_name = ? WHERE referee_id = ?";
         try
         {
             Connection conn = DBConnection.getConnection();
@@ -124,9 +118,7 @@ public class RefereeDAO
             //update
             ps.setString(1, referee.getName());
             ps.setString(2, referee.getCountryName());
-            ps.setString(3, referee.getFifaCertificate());
-            ps.setInt(4, referee.getYearsExperience());
-            ps.setInt(5, referee.getRefereeId());
+            ps.setInt(3, referee.getRefereeId());
             int rows = ps.executeUpdate();
 
             ps.close();

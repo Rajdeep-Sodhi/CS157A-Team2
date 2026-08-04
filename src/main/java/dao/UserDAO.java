@@ -3,12 +3,59 @@ package dao;
 import model.User;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * UserDAO.java
  * Handles login lookups and new-user registration.
  */
 public class UserDAO {
+
+    public User getById(int userId) throws SQLException {
+        String sql = "SELECT user_id, name, email, role FROM Users WHERE user_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+                return new User(
+                    rs.getInt("user_id"),
+                    rs.getString("name"),
+                    rs.getString("email"),
+                    rs.getString("role")
+                );
+            }
+        }
+    }
+
+    public List<User> listAll() throws SQLException {
+        String sql =
+            "SELECT u.user_id, u.name, u.email, u.role, " +
+            "       COUNT(c.comment_id) AS flagged_comment_count " +
+            "FROM Users u " +
+            "LEFT JOIN Comments c ON c.user_id = u.user_id AND c.is_flagged = TRUE " +
+            "GROUP BY u.user_id, u.name, u.email, u.role " +
+            "ORDER BY u.role = 'admin' DESC, u.name ASC, u.email ASC";
+        List<User> users = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                User user = new User(
+                    rs.getInt("user_id"),
+                    rs.getString("name"),
+                    rs.getString("email"),
+                    rs.getString("role")
+                );
+                user.setFlaggedCommentCount(rs.getInt("flagged_comment_count"));
+                users.add(user);
+            }
+        }
+        return users;
+    }
 
     /** Returns the User if email/password match, otherwise null. */
     public User authenticate(String email, String password) throws SQLException {
@@ -79,6 +126,62 @@ public class UserDAO {
             ps.setString(1, role);
             ps.setInt(2, userId);
             ps.executeUpdate();
+        }
+    }
+
+    public void deleteUser(int userId) throws SQLException {
+        try (Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                String role = null;
+                try (PreparedStatement check = conn.prepareStatement(
+                        "SELECT role FROM Users WHERE user_id = ?")) {
+                    check.setInt(1, userId);
+                    try (ResultSet rs = check.executeQuery()) {
+                        if (rs.next()) {
+                            role = rs.getString("role");
+                        }
+                    }
+                }
+
+                if (role == null) {
+                    throw new IllegalStateException("That user no longer exists.");
+                }
+                if ("admin".equalsIgnoreCase(role)) {
+                    throw new IllegalStateException("Admin accounts cannot be edited or removed.");
+                }
+
+                try (PreparedStatement clearFlags = conn.prepareStatement(
+                        "UPDATE Comments SET flagged_by_user_id = NULL WHERE flagged_by_user_id = ?")) {
+                    clearFlags.setInt(1, userId);
+                    clearFlags.executeUpdate();
+                }
+
+                try (PreparedStatement deletePredictions = conn.prepareStatement(
+                        "DELETE FROM Predictions WHERE user_id = ?")) {
+                    deletePredictions.setInt(1, userId);
+                    deletePredictions.executeUpdate();
+                }
+
+                try (PreparedStatement deleteComments = conn.prepareStatement(
+                        "DELETE FROM Comments WHERE user_id = ?")) {
+                    deleteComments.setInt(1, userId);
+                    deleteComments.executeUpdate();
+                }
+
+                try (PreparedStatement deleteUser = conn.prepareStatement(
+                        "DELETE FROM Users WHERE user_id = ?")) {
+                    deleteUser.setInt(1, userId);
+                    deleteUser.executeUpdate();
+                }
+
+                conn.commit();
+            } catch (SQLException | IllegalStateException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
         }
     }
 }

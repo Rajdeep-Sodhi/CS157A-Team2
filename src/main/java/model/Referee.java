@@ -11,25 +11,14 @@ public class Referee
     //referee nationality
     private String countryName;
 
-    //fifa certificate level
-    private String fifaCertificate;
-
-    //years of experience
-    private int yearsExperience;
-
     //empty constructor
     public Referee() {}
 
-    public Referee(int refereeId, String name,
-            String countryName,
-            String fifaCertificate,
-            int yearsExperience) 
+    public Referee(int refereeId, String name, String countryName)
             {
                 this.refereeId = refereeId;
                 this.name = name;
                 this.countryName = countryName;
-                this.fifaCertificate = fifaCertificate;
-                this.yearsExperience = yearsExperience;
             }
 
     public int getRefereeId() 
@@ -62,23 +51,4 @@ public class Referee
         this.countryName = countryName;
     }
 
-    public String getFifaCertificate() 
-    {
-        return fifaCertificate;
-    }
-
-    public void setFifaCertificate(String fifaCertificate) 
-    {
-        this.fifaCertificate = fifaCertificate;
-    }
-
-    public int getYearsExperience() 
-    {
-        return yearsExperience;
-    }
-
-    public void setYearsExperience(int yearsExperience) 
-    {
-        this.yearsExperience = yearsExperience;
-    }
 }

@@ -1,6 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, model.User, model.Referee, model.MatchAssignment"%>
 <%
+    // Always load this page through RefereeServlet so the referee list is populated.
+    if (request.getAttribute("referees") == null && request.getRequestURI().endsWith("/referees.jsp")) {
+        response.sendRedirect(request.getContextPath() + "/referees");
+        return;
+    }
+
     User authUser = (User) session.getAttribute("authUser");
     boolean isAdmin = authUser != null && authUser.isAdmin();
 
@@ -32,8 +38,7 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>Name</th><th>Nationality</th><th>FIFA Certificate</th>
-                    <th>Years of Experience</th>
+                    <th>Name</th><th>Nationality</th>
                     <% if (isAdmin) { %><th></th><% } %>
                 </tr>
             </thead>
@@ -42,8 +47,6 @@
                 <tr>
                     <td class="team-name"><%= r.getName() %></td>
                     <td><%= r.getCountryName() == null ? "-" : r.getCountryName() %></td>
-                    <td><%= r.getFifaCertificate() == null ? "-" : r.getFifaCertificate() %></td>
-                    <td><%= r.getYearsExperience() %></td>
                     <% if (isAdmin) { %>
                     <td class="action-row">
                         <button type="button" class="btn btn-sm btn-secondary"
@@ -59,7 +62,7 @@
                 </tr>
                 <% if (isAdmin) { %>
                 <tr id="edit-<%= r.getRefereeId() %>" class="hidden-form">
-                    <td colspan="5">
+                    <td colspan="3">
                         <form method="post" action="<%= ctx %>/referees" class="form-grid" style="padding:1rem 0;">
                             <input type="hidden" name="action" value="edit">
                             <input type="hidden" name="referee_id" value="<%= r.getRefereeId() %>">
@@ -71,14 +74,6 @@
                                 <label>Nationality (Country)</label>
                                 <input type="text" name="country_name" value="<%= r.getCountryName() == null ? "" : r.getCountryName() %>">
                             </div>
-                            <div class="form-field">
-                                <label>FIFA Certificate</label>
-                                <input type="text" name="fifa_certificate" value="<%= r.getFifaCertificate() == null ? "" : r.getFifaCertificate() %>">
-                            </div>
-                            <div class="form-field">
-                                <label>Years of Experience</label>
-                                <input type="number" name="years_experience" min="0" value="<%= r.getYearsExperience() %>">
-                            </div>
                             <div class="form-field full form-actions">
                                 <button type="submit" class="btn btn-primary btn-sm">Save</button>
                             </div>
@@ -88,7 +83,7 @@
                 <% } %>
             <% } %>
             <% if (referees.isEmpty()) { %>
-                <tr><td colspan="<%= isAdmin ? 5 : 4 %>" class="muted">No referees yet.</td></tr>
+                <tr><td colspan="<%= isAdmin ? 3 : 2 %>" class="muted">No referees yet.</td></tr>
             <% } %>
             </tbody>
         </table>
@@ -108,14 +103,6 @@
                     <div class="form-field">
                         <label for="country_name">Nationality (Country)</label>
                         <input type="text" id="country_name" name="country_name">
-                    </div>
-                    <div class="form-field">
-                        <label for="fifa_certificate">FIFA Certificate</label>
-                        <input type="text" id="fifa_certificate" name="fifa_certificate">
-                    </div>
-                    <div class="form-field">
-                        <label for="years_experience">Years of Experience</label>
-                        <input type="number" id="years_experience" name="years_experience" min="0">
                     </div>
                 </div>
                 <div class="form-actions">

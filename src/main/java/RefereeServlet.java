@@ -90,8 +90,6 @@ public class RefereeServlet extends HttpServlet
         Referee referee = new Referee();
         referee.setName(req.getParameter("name"));
         referee.setCountryName(req.getParameter("country_name"));
-        referee.setFifaCertificate(req.getParameter("fifa_certificate"));
-        referee.setYearsExperience(parseYearsExperience(req));
         refereeDAO.addReferee(referee);
     }
 
@@ -102,8 +100,6 @@ public class RefereeServlet extends HttpServlet
         referee.setRefereeId(Integer.parseInt(req.getParameter("referee_id")));
         referee.setName(req.getParameter("name"));
         referee.setCountryName(req.getParameter("country_name"));
-        referee.setFifaCertificate(req.getParameter("fifa_certificate"));
-        referee.setYearsExperience(parseYearsExperience(req));
         refereeDAO.updateReferee(referee);
     }
 
@@ -120,17 +116,6 @@ public class RefereeServlet extends HttpServlet
         }
         refereeDAO.assignReferee(refereeId, matchId);
         return null;
-    }
-
-    //empty box just means no value entered, default to 0
-    private int parseYearsExperience(HttpServletRequest req)
-    {
-        String years = req.getParameter("years_experience");
-        if(years == null || years.isBlank())
-        {
-            return 0;
-        }
-        return Integer.parseInt(years.trim());
     }
 
     //stay on referee page and show what went wrong

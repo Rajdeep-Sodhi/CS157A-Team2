@@ -13,7 +13,7 @@ public class DBConnection {
 
     private static final String DB_URL  = "jdbc:mysql://localhost:3306/worldcup2026?useSSL=false&allowPublicKeyRetrieval=true";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "Worm9apple"; //*******CHANGE THIS********
+    private static final String DB_PASSWORD = "rajdeep moment"; //*******CHANGE THIS********
 
     public static Connection getConnection() throws SQLException {
         try {

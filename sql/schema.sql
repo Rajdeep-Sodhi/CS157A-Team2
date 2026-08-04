@@ -217,9 +217,3 @@ ALTER TABLE Matches ADD CONSTRAINT uq_venue_datetime UNIQUE (venue_id, match_dat
 -- affect any existing seeded rows.
 ALTER TABLE Users ADD COLUMN date_of_birth DATE NULL;
 ALTER TABLE Users ADD COLUMN country VARCHAR(100) NULL;
-
--- RefereeDAO reads/writes fifa_certificate and years_experience,
--- but Referees never had those columns - every referee add/edit/
--- view was silently failing without these.
-ALTER TABLE Referees ADD COLUMN fifa_certificate VARCHAR(50) NULL;
-ALTER TABLE Referees ADD COLUMN years_experience INT NULL;

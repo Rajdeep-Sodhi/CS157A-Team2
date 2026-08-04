@@ -15,6 +15,9 @@
         <li><a href="<%= request.getContextPath() %>/venues" class="<%= currentPage.equals("venues") ? "active" : "" %>">Venues</a></li>
         <li><a href="<%= request.getContextPath() %>/referees" class="<%= currentPage.equals("referees") ? "active" : "" %>">Referees</a></li>
         <li><a href="predictions.jsp" class="<%= currentPage.equals("predictions") ? "active" : "" %>">Predictions</a></li>
+        <% if (__navUser != null && __navUser.isAdmin()) { %>
+        <li><a href="<%= request.getContextPath() %>/users" class="<%= currentPage.equals("users") ? "active" : "" %>">Users</a></li>
+        <% } %>
     </ul>
     <div class="nav-auth">
         <% if (__navUser != null) { %>
