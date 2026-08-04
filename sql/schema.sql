@@ -231,3 +231,8 @@ CREATE TABLE CommentVotes (
     FOREIGN KEY (comment_id) REFERENCES Comments(comment_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
+
+-- FR: "select an action - dismiss/delete/ban user" (comment moderation).
+-- Banned users keep their account and history, they just can't log in
+-- (checked in LoginServlet); admin accounts can never be banned.
+ALTER TABLE Users ADD COLUMN is_banned BOOLEAN DEFAULT FALSE;

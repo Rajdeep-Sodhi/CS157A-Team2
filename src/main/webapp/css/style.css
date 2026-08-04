@@ -324,6 +324,7 @@ body {
 .flag-character-count { color: #64748b; font-size: 0.72rem; }
 .flag-review { margin-top: 0.65rem; padding: 0.65rem 0.8rem; border-left: 3px solid #dc2626; background: #fef2f2; color: #7f1d1d; font-size: 0.78rem; }
 .flag-review span { display: block; margin-top: 0.25rem; color: #991b1b; }
+.flag-review-actions { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
 .message-hidden { opacity: 0; transition: opacity 0.4s ease; pointer-events: none; }
 .flag-count {
     display: inline-flex;

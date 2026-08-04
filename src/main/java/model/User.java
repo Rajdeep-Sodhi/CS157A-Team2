@@ -13,6 +13,7 @@ public class User implements Serializable {
     private String email;
     private String role; // "guest" | "fan" | "admin"
     private int flaggedCommentCount;
+    private boolean banned;
 
     public User(int userId, String name, String email, String role) {
         this.userId = userId;
@@ -29,4 +30,6 @@ public class User implements Serializable {
     public boolean isAdmin() { return "admin".equalsIgnoreCase(role); }
     public int getFlaggedCommentCount() { return flaggedCommentCount; }
     public void setFlaggedCommentCount(int flaggedCommentCount) { this.flaggedCommentCount = flaggedCommentCount; }
+    public boolean isBanned() { return banned; }
+    public void setBanned(boolean banned) { this.banned = banned; }
 }

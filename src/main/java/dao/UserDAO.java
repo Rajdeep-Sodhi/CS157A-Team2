@@ -13,7 +13,7 @@ import java.util.List;
 public class UserDAO {
 
     public User getById(int userId) throws SQLException {
-        String sql = "SELECT user_id, name, email, role FROM Users WHERE user_id = ?";
+        String sql = "SELECT user_id, name, email, role, is_banned FROM Users WHERE user_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
@@ -21,23 +21,25 @@ public class UserDAO {
                 if (!rs.next()) {
                     return null;
                 }
-                return new User(
+                User user = new User(
                     rs.getInt("user_id"),
                     rs.getString("name"),
                     rs.getString("email"),
                     rs.getString("role")
                 );
+                user.setBanned(rs.getBoolean("is_banned"));
+                return user;
             }
         }
     }
 
     public List<User> listAll() throws SQLException {
         String sql =
-            "SELECT u.user_id, u.name, u.email, u.role, " +
+            "SELECT u.user_id, u.name, u.email, u.role, u.is_banned, " +
             "       COUNT(c.comment_id) AS flagged_comment_count " +
             "FROM Users u " +
             "LEFT JOIN Comments c ON c.user_id = u.user_id AND c.is_flagged = TRUE " +
-            "GROUP BY u.user_id, u.name, u.email, u.role " +
+            "GROUP BY u.user_id, u.name, u.email, u.role, u.is_banned " +
             "ORDER BY u.role = 'admin' DESC, u.name ASC, u.email ASC";
         List<User> users = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
@@ -51,15 +53,16 @@ public class UserDAO {
                     rs.getString("role")
                 );
                 user.setFlaggedCommentCount(rs.getInt("flagged_comment_count"));
+                user.setBanned(rs.getBoolean("is_banned"));
                 users.add(user);
             }
         }
         return users;
     }
 
-    /** Returns the User if email/password match, otherwise null. */
+    /** Returns the User if email/password match, otherwise null. Banned status is set on the returned User - LoginServlet checks it and refuses login. */
     public User authenticate(String email, String password) throws SQLException {
-        String sql = "SELECT user_id, name, email, password_hash, role FROM Users WHERE email = ?";
+        String sql = "SELECT user_id, name, email, password_hash, role, is_banned FROM Users WHERE email = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
@@ -67,11 +70,13 @@ public class UserDAO {
                 if (rs.next()) {
                     String storedHash = rs.getString("password_hash");
                     if (PasswordUtil.verify(password, storedHash)) {
-                        return new User(
+                        User user = new User(
                                 rs.getInt("user_id"),
                                 rs.getString("name"),
                                 rs.getString("email"),
                                 rs.getString("role"));
+                        user.setBanned(rs.getBoolean("is_banned"));
+                        return user;
                     }
                 }
             }
@@ -136,6 +141,39 @@ public class UserDAO {
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             return rs.next() ? rs.getInt(1) : 0;
+        }
+    }
+
+    /**
+     * FR: comment-moderation action "ban user". Banned users keep their
+     * account, comments, and predictions - they just can't log in
+     * (LoginServlet checks User.isBanned()). Admin accounts can never
+     * be banned, same protection as delete/demote.
+     */
+    public void setBanned(int userId, boolean banned) throws SQLException, IllegalStateException {
+        String role = null;
+        try (Connection conn = DBConnection.getConnection()) {
+            try (PreparedStatement check = conn.prepareStatement(
+                    "SELECT role FROM Users WHERE user_id = ?")) {
+                check.setInt(1, userId);
+                try (ResultSet rs = check.executeQuery()) {
+                    if (rs.next()) role = rs.getString("role");
+                }
+            }
+
+            if (role == null) {
+                throw new IllegalStateException("That user no longer exists.");
+            }
+            if ("admin".equalsIgnoreCase(role)) {
+                throw new IllegalStateException("Admin accounts cannot be banned.");
+            }
+
+            try (PreparedStatement update = conn.prepareStatement(
+                    "UPDATE Users SET is_banned = ? WHERE user_id = ?")) {
+                update.setBoolean(1, banned);
+                update.setInt(2, userId);
+                update.executeUpdate();
+            }
         }
     }
 

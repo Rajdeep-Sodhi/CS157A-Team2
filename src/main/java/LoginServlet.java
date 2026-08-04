@@ -44,6 +44,11 @@ public class LoginServlet extends HttpServlet {
                 req.getRequestDispatcher("/login.jsp").forward(req, resp);
                 return;
             }
+            if (user.isBanned()) {
+                req.setAttribute("error", "This account has been banned.");
+                req.getRequestDispatcher("/login.jsp").forward(req, resp);
+                return;
+            }
 
             HttpSession session = req.getSession(true);
             session.setAttribute("authUser", user);

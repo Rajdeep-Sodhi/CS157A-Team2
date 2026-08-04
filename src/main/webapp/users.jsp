@@ -43,7 +43,10 @@
                 <tr>
                     <td class="team-name"><%= user.getName() %></td>
                     <td><%= user.getEmail() %></td>
-                    <td><span class="badge"><%= user.getRole() %></span></td>
+                    <td>
+                        <span class="badge"><%= user.getRole() %></span>
+                        <% if (user.isBanned()) { %><span class="badge tag-unassigned">Banned</span><% } %>
+                    </td>
                     <td>
                         <span class="flag-count <%= user.getFlaggedCommentCount() > 0 ? "flag-count-alert" : "" %>">
                             <%= user.getFlaggedCommentCount() %>
@@ -57,6 +60,19 @@
                             <input type="hidden" name="user_id" value="<%= user.getUserId() %>">
                             <button type="submit" class="btn btn-sm btn-secondary">Make Admin</button>
                         </form>
+                        <% if (user.isBanned()) { %>
+                        <form method="post" action="<%= ctx %>/users" style="display:inline-block; margin-right:.5rem;">
+                            <input type="hidden" name="action" value="unban">
+                            <input type="hidden" name="user_id" value="<%= user.getUserId() %>">
+                            <button type="submit" class="btn btn-sm btn-secondary">Unban</button>
+                        </form>
+                        <% } else { %>
+                        <form method="post" action="<%= ctx %>/users" style="display:inline-block; margin-right:.5rem;">
+                            <input type="hidden" name="action" value="ban">
+                            <input type="hidden" name="user_id" value="<%= user.getUserId() %>">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Ban this user? They will no longer be able to log in.');">Ban</button>
+                        </form>
+                        <% } %>
                         <form method="post" action="<%= ctx %>/users" style="display:inline-block;">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="user_id" value="<%= user.getUserId() %>">

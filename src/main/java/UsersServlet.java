@@ -86,6 +86,12 @@ public class UsersServlet extends HttpServlet {
                     }
                     userDAO.deleteUser(userId);
                     break;
+                case "ban":
+                    userDAO.setBanned(userId, true);
+                    break;
+                case "unban":
+                    userDAO.setBanned(userId, false);
+                    break;
                 default:
                     throw new IllegalStateException("Unknown action.");
             }

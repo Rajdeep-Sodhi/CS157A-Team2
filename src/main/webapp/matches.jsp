@@ -43,6 +43,10 @@
     <div id="flag-message" class="form-message form-error">Please provide a reason between 1 and 250 characters.</div>
     <% } else if ("unavailable".equals(flagStatus)) { %>
     <div id="flag-message" class="form-message form-error">That comment cannot be flagged. It may be yours or already reported.</div>
+    <% } else if ("dismissed".equals(flagStatus)) { %>
+    <div id="flag-message" class="form-message form-success">Flag dismissed - the comment stays up.</div>
+    <% } else if ("banned".equals(flagStatus)) { %>
+    <div id="flag-message" class="form-message form-success">User banned.</div>
     <% } %>
 
     <% if ("saved".equals(commentStatus)) { %>
@@ -149,6 +153,20 @@
                                         <% if (c.get("reporter_name") != null) { %>
                                         <span>Reported by <%= c.get("reporter_name") %></span>
                                         <% } %>
+                                        <div class="flag-review-actions">
+                                            <form method="post" action="<%= ctx %>/flag-comment" style="display:inline">
+                                                <input type="hidden" name="action" value="dismiss">
+                                                <input type="hidden" name="commentId" value="<%= c.get("comment_id") %>">
+                                                <input type="hidden" name="matchId" value="<%= m.get("match_id") %>">
+                                                <button type="submit" class="btn btn-sm btn-secondary">Dismiss Flag</button>
+                                            </form>
+                                            <form method="post" action="<%= ctx %>/flag-comment" style="display:inline">
+                                                <input type="hidden" name="action" value="ban">
+                                                <input type="hidden" name="authorUserId" value="<%= c.get("user_id") %>">
+                                                <input type="hidden" name="matchId" value="<%= m.get("match_id") %>">
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Ban this user? They will no longer be able to log in.');">Ban User</button>
+                                            </form>
+                                        </div>
                                     </div>
                                     <% } %>
                                     <% if (isLoggedIn && authUser.getUserId() != (Integer) c.get("user_id") && !Boolean.TRUE.equals(c.get("is_flagged"))) { %>
