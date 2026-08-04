@@ -1,3 +1,4 @@
+import dao.TeamDAO;
 import dao.VenueDAO;
 import util.AuthHelper;
 
@@ -20,6 +21,7 @@ import java.util.Map;
 public class VenueServlet extends HttpServlet {
 
     private final VenueDAO venueDAO = new VenueDAO();
+    private final TeamDAO teamDAO = new TeamDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -27,6 +29,10 @@ public class VenueServlet extends HttpServlet {
         try {
             List<Map<String, Object>> venues = venueDAO.listAll();
             req.setAttribute("venues", venues);
+            // host_country has a foreign key to Countries.country_name, so
+            // the form needs to offer a dropdown of real values rather than
+            // a free-text field - any typo there throws a FK violation.
+            req.setAttribute("countries", teamDAO.listAll());
         } catch (SQLException e) {
             req.setAttribute("dbError", e.getMessage());
         }
@@ -91,6 +97,7 @@ public class VenueServlet extends HttpServlet {
         req.setAttribute("dbError", message);
         try {
             req.setAttribute("venues", venueDAO.listAll());
+            req.setAttribute("countries", teamDAO.listAll());
         } catch (SQLException ignored) {
         }
         req.getRequestDispatcher("/venues.jsp").forward(req, resp);

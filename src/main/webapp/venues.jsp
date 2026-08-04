@@ -6,6 +6,8 @@
 
     List<Map<String,Object>> venues = (List<Map<String,Object>>) request.getAttribute("venues");
     if (venues == null) venues = new ArrayList<>();
+    List<Map<String,Object>> countries = (List<Map<String,Object>>) request.getAttribute("countries");
+    if (countries == null) countries = new ArrayList<>();
     String dbError = (String) request.getAttribute("dbError");
     String ctx = request.getContextPath();
 %>
@@ -44,11 +46,15 @@
                     <% if (isAdmin) { %>
                     <td class="action-row">
                         <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('edit-<%= v.get("venue_id") %>').classList.toggle('hidden-form')">Edit</button>
+                        <% if (matchCount > 0) { %>
+                        <span class="muted" title="Remove this stadium's matches first">Has matches</span>
+                        <% } else { %>
                         <form method="post" action="<%= ctx %>/venues" style="display:inline">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="venue_id" value="<%= v.get("venue_id") %>">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('<%= matchCount > 0 ? "This stadium has matches scheduled and cannot be removed. OK to try anyway?" : "Delete this stadium?" %>');">Delete</button>
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this stadium?');">Delete</button>
                         </form>
+                        <% } %>
                     </td>
                     <% } %>
                 </tr>
@@ -68,7 +74,13 @@
                             </div>
                             <div class="form-field">
                                 <label>Host Country</label>
-                                <input type="text" name="host_country" value="<%= v.get("host_country") == null ? "" : v.get("host_country") %>">
+                                <select name="host_country">
+                                    <option value="">(none)</option>
+                                    <% for (Map<String,Object> c : countries) {
+                                        String countryName = (String) c.get("country_name"); %>
+                                    <option value="<%= countryName %>" <%= countryName.equals(v.get("host_country")) ? "selected" : "" %>><%= countryName %></option>
+                                    <% } %>
+                                </select>
                             </div>
                             <div class="form-field">
                                 <label>Capacity</label>
@@ -106,7 +118,12 @@
                     </div>
                     <div class="form-field">
                         <label for="host_country">Host Country</label>
-                        <input type="text" id="host_country" name="host_country">
+                        <select id="host_country" name="host_country">
+                            <option value="">(none)</option>
+                            <% for (Map<String,Object> c : countries) { %>
+                            <option value="<%= c.get("country_name") %>"><%= c.get("country_name") %></option>
+                            <% } %>
+                        </select>
                     </div>
                     <div class="form-field">
                         <label for="capacity">Capacity</label>

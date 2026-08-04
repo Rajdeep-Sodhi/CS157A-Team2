@@ -18,6 +18,7 @@
     Map<Integer,List<Map<String,Object>>> predictionsByMatch = new HashMap<>();
     List<Map<String,Object>> finishedMatches = new ArrayList<>();
     Map<Integer,List<Map<String,Object>>> finishedPredictionsByMatch = new HashMap<>();
+    List<Map<String,Object>> leaderboard = new ArrayList<>();
     String predictionError = (String) request.getAttribute("error");
 
     if (predictionError == null) {
@@ -109,6 +110,38 @@
                 }
             }
             finishedMatches.addAll(finishedMatchIndex.values());
+
+            // FR: "points added to user account... leaderboard page." Computed
+            // fresh from Predictions + MatchResults each time (same approach as
+            // GroupStandings), so it can never drift out of sync - no separate
+            // points column to keep updated. Scoring matches the per-match
+            // grading shown above: 3 points for an exact score match, 1 point
+            // if exactly one side matches, 0 otherwise.
+            String leaderboardSql =
+                "SELECT u.user_id, u.name, " +
+                "  SUM(CASE " +
+                "        WHEN p.predicted_team1_score = mr.team1_score AND p.predicted_team2_score = mr.team2_score THEN 3 " +
+                "        WHEN p.predicted_team1_score = mr.team1_score OR p.predicted_team2_score = mr.team2_score THEN 1 " +
+                "        ELSE 0 END) AS total_points, " +
+                "  COUNT(*) AS predictions_graded " +
+                "FROM Predictions p " +
+                "JOIN Users u ON u.user_id = p.user_id " +
+                "JOIN MatchResults mr ON mr.result_id = " +
+                "  (SELECT MAX(latest.result_id) FROM MatchResults latest WHERE latest.match_id = p.match_id) " +
+                "WHERE mr.team1_score IS NOT NULL AND mr.team2_score IS NOT NULL " +
+                "GROUP BY u.user_id, u.name " +
+                "ORDER BY total_points DESC, u.name ASC";
+            try (PreparedStatement ps = conn.prepareStatement(leaderboardSql);
+                 ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String,Object> row = new LinkedHashMap<>();
+                    row.put("user_id", rs.getInt("user_id"));
+                    row.put("name", rs.getString("name"));
+                    row.put("total_points", rs.getInt("total_points"));
+                    row.put("predictions_graded", rs.getInt("predictions_graded"));
+                    leaderboard.add(row);
+                }
+            }
         } catch (SQLException e) {
             predictionError = e.getMessage();
         }
@@ -127,6 +160,33 @@
 <% request.setAttribute("currentPage", "predictions"); %>
 <%@ include file="nav.jsp" %>
 <main class="container">
+    <section class="section">
+        <h1 class="section-title">Leaderboard</h1>
+        <p class="muted" style="margin-bottom: 1rem;">
+            3 points for an exact score, 1 point if you get either team's score right, 0 otherwise.
+            Only matches with a final result count.
+        </p>
+        <table class="data-table">
+            <thead>
+                <tr><th>Rank</th><th>Name</th><th>Points</th><th>Predictions Graded</th></tr>
+            </thead>
+            <tbody>
+            <% int rank = 1; for (Map<String,Object> row : leaderboard) {
+                boolean isYou = predictionUserId != null && predictionUserId.equals(row.get("user_id")); %>
+                <tr class="<%= isYou ? "qualify-row" : "" %>">
+                    <td><%= rank++ %></td>
+                    <td class="team-name"><%= escapeHtml(row.get("name")) %><%= isYou ? " (You)" : "" %></td>
+                    <td><strong><%= row.get("total_points") %></strong></td>
+                    <td><%= row.get("predictions_graded") %></td>
+                </tr>
+            <% } %>
+            <% if (leaderboard.isEmpty()) { %>
+                <tr><td colspan="4" class="muted">No graded predictions yet - check back once some matches have results.</td></tr>
+            <% } %>
+            </tbody>
+        </table>
+    </section>
+
     <section class="section">
         <h1 class="section-title">Upcoming Match Predictions</h1>
 
