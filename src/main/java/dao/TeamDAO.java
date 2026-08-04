@@ -85,17 +85,38 @@ public class TeamDAO {
 
     public void create(String countryName, Integer fifaRanking, String confederation,
                         String groupLetter, String coachName) throws SQLException {
-        String sql =
-            "INSERT INTO Countries (country_name, fifa_ranking, confederation, coach_name, group_letter) " +
-            "VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, countryName);
-            setNullableInt(ps, 2, fifaRanking);
-            ps.setString(3, confederation);
-            ps.setString(4, coachName);
-            ps.setString(5, (groupLetter == null || groupLetter.isBlank()) ? null : groupLetter);
-            ps.executeUpdate();
+        try (Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                String sql =
+                    "INSERT INTO Countries (country_name, fifa_ranking, confederation, coach_name, group_letter) " +
+                    "VALUES (?, ?, ?, ?, ?)";
+                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                    ps.setString(1, countryName);
+                    setNullableInt(ps, 2, fifaRanking);
+                    ps.setString(3, confederation);
+                    ps.setString(4, coachName);
+                    ps.setString(5, (groupLetter == null || groupLetter.isBlank()) ? null : groupLetter);
+                    ps.executeUpdate();
+                }
+
+                // Zeroed standings row, so this team shows up on the Standings
+                // page right away instead of staying invisible until its
+                // first match result is entered (Standings inner-joins
+                // GroupStandings, so a team with no row there never appears).
+                try (PreparedStatement standingsPs = conn.prepareStatement(
+                        "INSERT INTO GroupStandings (country_name, wins, draws, losses, points) VALUES (?, 0, 0, 0, 0)")) {
+                    standingsPs.setString(1, countryName);
+                    standingsPs.executeUpdate();
+                }
+
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
         }
     }
 
