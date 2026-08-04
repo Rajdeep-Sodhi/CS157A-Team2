@@ -125,9 +125,13 @@ CREATE TABLE Comments (
     content VARCHAR(250) NOT NULL,
     upvote_count INT DEFAULT 0,
     is_flagged BOOLEAN DEFAULT FALSE,
+    flagged_by_user_id INT,
+    flag_reason VARCHAR(250),
+    flagged_at TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (comment_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (flagged_by_user_id) REFERENCES Users(user_id),
     FOREIGN KEY (match_id) REFERENCES Matches(match_id)
 );
 
@@ -219,4 +223,3 @@ ALTER TABLE Users ADD COLUMN country VARCHAR(100) NULL;
 -- view was silently failing without these.
 ALTER TABLE Referees ADD COLUMN fifa_certificate VARCHAR(50) NULL;
 ALTER TABLE Referees ADD COLUMN years_experience INT NULL;
-

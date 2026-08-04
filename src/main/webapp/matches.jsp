@@ -16,6 +16,7 @@
     if (commentsByMatch == null) commentsByMatch = new HashMap<>();
     String dbError = (String) request.getAttribute("dbError");
     String commentStatus = request.getParameter("comment");
+    String flagStatus = request.getParameter("flag");
     String ctx = request.getContextPath();
 %>
 <!DOCTYPE html>
@@ -34,10 +35,22 @@
     <div class="db-error">Error: <%= dbError %></div>
     <% } %>
 
+    <% if ("submitted".equals(flagStatus)) { %>
+    <div id="flag-message" class="form-message form-success">Your flag has been taken into consideration. The admins have been notified.</div>
+    <% } else if ("invalid".equals(flagStatus)) { %>
+    <div id="flag-message" class="form-message form-error">Please provide a reason between 1 and 250 characters.</div>
+    <% } else if ("unavailable".equals(flagStatus)) { %>
+    <div id="flag-message" class="form-message form-error">That comment cannot be flagged. It may be yours or already reported.</div>
+    <% } %>
+
     <% if ("saved".equals(commentStatus)) { %>
     <div class="form-message form-success">Your comment was posted.</div>
     <% } else if ("invalid".equals(commentStatus)) { %>
     <div class="form-message form-error">Comment couldn't be posted - check it's between 1 and 250 characters.</div>
+    <% } else if ("deleted".equals(commentStatus)) { %>
+    <div id="comment-message" class="form-message form-success">The comment was removed.</div>
+    <% } else if ("delete-invalid".equals(commentStatus)) { %>
+    <div id="comment-message" class="form-message form-error">The comment could not be removed. It may no longer exist.</div>
     <% } %>
 
     <section class="section">
@@ -93,10 +106,38 @@
                                         <span class="comment-author"><%= c.get("commenter_name") %></span>
                                         <span>
                                             <%= c.get("created_at") == null ? "" : ((String) c.get("created_at")).substring(0, 16) %>
-                                            <% if (Boolean.TRUE.equals(c.get("is_flagged"))) { %><span class="comment-flagged">Flagged</span><% } %>
+                                            <% if (isAdmin && Boolean.TRUE.equals(c.get("is_flagged"))) { %><span class="comment-flagged">Flagged for review</span><% } %>
                                         </span>
                                     </div>
                                     <div class="comment-content"><%= c.get("content") %></div>
+                                    <% if (isAdmin) { %>
+                                    <form method="post" action="<%= ctx %>/delete-comment" class="comment-delete-form">
+                                        <input type="hidden" name="commentId" value="<%= c.get("comment_id") %>">
+                                        <input type="hidden" name="matchId" value="<%= m.get("match_id") %>">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Remove this comment permanently?');">Remove Comment</button>
+                                    </form>
+                                    <% } %>
+                                    <% if (isAdmin && Boolean.TRUE.equals(c.get("is_flagged"))) { %>
+                                    <div class="flag-review">
+                                        <strong>Report reason:</strong> <%= c.get("flag_reason") %>
+                                        <% if (c.get("reporter_name") != null) { %>
+                                        <span>Reported by <%= c.get("reporter_name") %></span>
+                                        <% } %>
+                                    </div>
+                                    <% } %>
+                                    <% if (isLoggedIn && authUser.getUserId() != (Integer) c.get("user_id") && !Boolean.TRUE.equals(c.get("is_flagged"))) { %>
+                                    <button type="button" class="comment-flag-button" onclick="document.getElementById('flag-form-<%= c.get("comment_id") %>').classList.toggle('hidden-form')">Flag comment</button>
+                                    <form id="flag-form-<%= c.get("comment_id") %>" method="post" action="<%= ctx %>/flag-comment" class="comment-flag-form hidden-form">
+                                        <input type="hidden" name="commentId" value="<%= c.get("comment_id") %>">
+                                        <input type="hidden" name="matchId" value="<%= m.get("match_id") %>">
+                                        <label for="flag-reason-<%= c.get("comment_id") %>">Why are you flagging this comment?</label>
+                                        <textarea id="flag-reason-<%= c.get("comment_id") %>" name="reason" maxlength="250" required placeholder="Explain the issue (250 characters maximum)"></textarea>
+                                        <div class="flag-form-footer">
+                                            <span class="flag-character-count">250 characters maximum</span>
+                                            <button type="submit" class="btn btn-danger btn-sm">Submit Flag</button>
+                                        </div>
+                                    </form>
+                                    <% } %>
                                 </div>
                             <% } }
                                if (commentCount == 0) { %>
@@ -265,6 +306,14 @@
         var matchId = window.location.hash.replace('#match-', '');
         var panel = document.getElementById('comments-' + matchId);
         if (panel) panel.classList.remove('hidden-form');
+    }
+    var flagMessage = document.getElementById('flag-message');
+    if (flagMessage) {
+        window.setTimeout(function () { flagMessage.classList.add('message-hidden'); }, 6000);
+    }
+    var commentMessage = document.getElementById('comment-message');
+    if (commentMessage) {
+        window.setTimeout(function () { commentMessage.classList.add('message-hidden'); }, 6000);
     }
 </script>
 </body>

@@ -29,10 +29,12 @@ public class CommentDAO {
         }
 
         String sql =
-            "SELECT c.comment_id, c.match_id, c.content, c.upvote_count, c.is_flagged, c.created_at, " +
-            "       u.name AS commenter_name " +
+            "SELECT c.comment_id, c.user_id, c.match_id, c.content, c.upvote_count, c.is_flagged, " +
+            "       c.flag_reason, c.flagged_at, c.created_at, u.name AS commenter_name, " +
+            "       reporter.name AS reporter_name " +
             "FROM Comments c " +
             "JOIN Users u ON c.user_id = u.user_id " +
+            "LEFT JOIN Users reporter ON c.flagged_by_user_id = reporter.user_id " +
             "WHERE c.match_id IN (" + placeholders + ") " +
             "ORDER BY c.created_at ASC";
 
@@ -46,12 +48,16 @@ public class CommentDAO {
                     int matchId = rs.getInt("match_id");
                     Map<String, Object> row = new LinkedHashMap<>();
                     row.put("comment_id", rs.getInt("comment_id"));
+                    row.put("user_id", rs.getInt("user_id"));
                     row.put("content", rs.getString("content"));
                     row.put("upvote_count", rs.getInt("upvote_count"));
                     row.put("is_flagged", rs.getBoolean("is_flagged"));
                     Timestamp ts = rs.getTimestamp("created_at");
                     row.put("created_at", ts == null ? null : ts.toString());
                     row.put("commenter_name", rs.getString("commenter_name"));
+                    row.put("flag_reason", rs.getString("flag_reason"));
+                    row.put("flagged_at", rs.getTimestamp("flagged_at"));
+                    row.put("reporter_name", rs.getString("reporter_name"));
                     result.computeIfAbsent(matchId, k -> new ArrayList<>()).add(row);
                 }
             }

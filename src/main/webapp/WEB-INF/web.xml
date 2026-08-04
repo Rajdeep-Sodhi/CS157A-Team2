@@ -7,6 +7,16 @@
 
     <display-name>World Cup 2026</display-name>
 
+    <servlet>
+        <servlet-name>DeleteCommentServlet</servlet-name>
+        <servlet-class>DeleteCommentServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>DeleteCommentServlet</servlet-name>
+        <url-pattern>/delete-comment</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
