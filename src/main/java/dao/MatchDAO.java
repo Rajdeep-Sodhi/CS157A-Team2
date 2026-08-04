@@ -184,6 +184,74 @@ public class MatchDAO {
                     ps.executeUpdate();
                 }
             }
+
+            // FR: "Standings update automatically after each match result is entered."
+            // Recalculated from scratch (not incremented) so correcting a result
+            // later doesn't double-count.
+            if (team1Country != null) recalculateStandings(conn, team1Country);
+            if (team2Country != null) recalculateStandings(conn, team2Country);
+        }
+    }
+
+    /** Recomputes one team's full win/draw/loss/points record from every completed match they've played. */
+    private void recalculateStandings(Connection conn, String countryName) throws SQLException {
+        int wins = 0, draws = 0, losses = 0;
+        String sql =
+            "SELECT m.team1_country_name, m.team2_country_name, " +
+            "       " + SCORE_SUBQUERY_T1 + " AS team1_score, " +
+            "       " + SCORE_SUBQUERY_T2 + " AS team2_score " +
+            "FROM Matches m " +
+            "WHERE m.team1_country_name = ? OR m.team2_country_name = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, countryName);
+            ps.setString(2, countryName);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Object s1Obj = rs.getObject("team1_score");
+                    Object s2Obj = rs.getObject("team2_score");
+                    if (s1Obj == null || s2Obj == null) continue; // not played yet
+                    int s1 = ((Number) s1Obj).intValue();
+                    int s2 = ((Number) s2Obj).intValue();
+                    boolean isTeam1 = countryName.equals(rs.getString("team1_country_name"));
+                    int ourScore = isTeam1 ? s1 : s2;
+                    int theirScore = isTeam1 ? s2 : s1;
+                    if (ourScore > theirScore) wins++;
+                    else if (ourScore == theirScore) draws++;
+                    else losses++;
+                }
+            }
+        }
+        int points = wins * 3 + draws;
+
+        Integer existingStandingId = null;
+        try (PreparedStatement check = conn.prepareStatement(
+                "SELECT standing_id FROM GroupStandings WHERE country_name = ?")) {
+            check.setString(1, countryName);
+            try (ResultSet rs = check.executeQuery()) {
+                if (rs.next()) existingStandingId = rs.getInt("standing_id");
+            }
+        }
+
+        if (existingStandingId != null) {
+            try (PreparedStatement update = conn.prepareStatement(
+                    "UPDATE GroupStandings SET wins = ?, draws = ?, losses = ?, points = ? WHERE standing_id = ?")) {
+                update.setInt(1, wins);
+                update.setInt(2, draws);
+                update.setInt(3, losses);
+                update.setInt(4, points);
+                update.setInt(5, existingStandingId);
+                update.executeUpdate();
+            }
+        } else {
+            try (PreparedStatement insert = conn.prepareStatement(
+                    "INSERT INTO GroupStandings (country_name, wins, draws, losses, points) VALUES (?, ?, ?, ?, ?)")) {
+                insert.setString(1, countryName);
+                insert.setInt(2, wins);
+                insert.setInt(3, draws);
+                insert.setInt(4, losses);
+                insert.setInt(5, points);
+                insert.executeUpdate();
+            }
         }
     }
 
