@@ -85,7 +85,7 @@ public class PredictionServlet extends HttpServlet {
                 }
             }
 
-            resp.sendRedirect(req.getContextPath() + "/predictions.jsp?status=saved");
+            resp.sendRedirect(req.getContextPath() + "/predictions.jsp?status=saved#match-" + matchId);
         } catch (SQLException e) {
             req.setAttribute("error", "Unable to save prediction: " + e.getMessage());
             req.getRequestDispatcher("/predictions.jsp").forward(req, resp);

@@ -305,3 +305,85 @@ body {
     resize: vertical;
 }
 .comment-signin-notice { color: #64748b; font-size: 0.85rem; }
+
+/* ---- Predictions (matches-style expandable rows) ---- */
+.hidden-form { display: none; }
+.table-scroll { overflow-x: auto; }
+.empty-state { color: #64748b; padding: 0.75rem 0; }
+.login-notice {
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid #bfdbfe;
+    border-radius: 7px;
+    background: #eff6ff;
+    color: #1e40af;
+}
+.login-notice a { color: #1d4ed8; font-weight: 700; }
+.prediction-table th:last-child { min-width: 130px; }
+.predictions-panel { padding: 1rem 0; }
+.predictions-panel h3 {
+    color: #1e293b;
+    font-size: 0.9rem;
+    margin: 0 0 0.75rem;
+}
+.community-predictions { margin-bottom: 1.25rem; }
+.prediction-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+}
+.prediction-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #1e293b;
+    font-size: 0.85rem;
+}
+.prediction-user { color: #475569; font-weight: 600; }
+.prediction-legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.7rem;
+    margin: -0.4rem 0 1rem;
+    color: #64748b;
+    font-size: 0.8rem;
+}
+.prediction-grade {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.grade-correct { background: #dcfce7; color: #166534; }
+.grade-partial { background: #fef3c7; color: #92400e; }
+.grade-incorrect { background: #fee2e2; color: #991b1b; }
+.finished-prediction-item { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; }
+.prediction-entry-form {
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+.score-form { display: flex; align-items: end; gap: 0.8rem; flex-wrap: wrap; }
+.score-form label { display: flex; flex-direction: column; gap: 0.35rem; color: #475569; font-size: 0.75rem; }
+.score-form input {
+    width: 76px;
+    padding: 0.55rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font: inherit;
+    text-align: center;
+}
+.score-separator { align-self: center; color: #94a3b8; font-weight: 700; }
+
+@media (max-width: 700px) {
+    .prediction-list { grid-template-columns: 1fr; }
+    .finished-prediction-item { grid-template-columns: 1fr auto; }
+    .finished-prediction-item .prediction-grade { grid-column: 1 / -1; justify-self: start; }
+}
