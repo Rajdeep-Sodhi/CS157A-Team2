@@ -14,9 +14,12 @@ import java.sql.SQLException;
 /**
  * PlayerServlet.java
  * FR: "Team and Players Management" - admin add/edit/delete for player rows.
- * Every player must belong to a team; deleting a team deletes its
- * players outright (see TeamDAO.delete()), so a player row here
- * always has a country.
+ *
+ * Players is a weak entity, identified by (country_name, jersey_number)
+ * together rather than a standalone player_id, jersey_number is only
+ * unique w/in a team. Editing either of those fields is a primary-key
+ * update, so the form submits both the OLD identity (which row to
+ * change) and the new values.
  */
 @WebServlet("/players")
 public class PlayerServlet extends HttpServlet {
@@ -64,28 +67,43 @@ public class PlayerServlet extends HttpServlet {
         if (countryName == null || countryName.isBlank()) {
             throw new IllegalStateException("Every player must belong to a team.");
         }
+        String jerseyParam = req.getParameter("jersey_number");
+        if (jerseyParam == null || jerseyParam.isBlank()) {
+            throw new IllegalStateException("Jersey number is required.");
+        }
+        int jerseyNumber = Integer.parseInt(jerseyParam.trim());
         String name = req.getParameter("name");
         String position = req.getParameter("position");
-        Integer jerseyNumber = parseIntOrNull(req.getParameter("jersey_number"));
         String dob = req.getParameter("date_of_birth");
 
-        playerDAO.create(countryName, name, position, jerseyNumber, dob);
+        playerDAO.create(countryName, jerseyNumber, name, position, dob);
     }
 
     private void handleEdit(HttpServletRequest req) throws SQLException {
-        int playerId = Integer.parseInt(req.getParameter("player_id"));
-        String countryName = req.getParameter("country_name");
+        String oldCountryName = req.getParameter("old_country_name");
+        int oldJerseyNumber = Integer.parseInt(req.getParameter("old_jersey_number"));
+
+        String newCountryName = req.getParameter("country_name");
+        if (newCountryName == null || newCountryName.isBlank()) {
+            throw new IllegalStateException("Every player must belong to a team.");
+        }
+        String jerseyParam = req.getParameter("jersey_number");
+        if (jerseyParam == null || jerseyParam.isBlank()) {
+            throw new IllegalStateException("Jersey number is required.");
+        }
+        int newJerseyNumber = Integer.parseInt(jerseyParam.trim());
         String name = req.getParameter("name");
         String position = req.getParameter("position");
-        Integer jerseyNumber = parseIntOrNull(req.getParameter("jersey_number"));
         String dob = req.getParameter("date_of_birth");
 
-        playerDAO.update(playerId, countryName, name, position, jerseyNumber, dob);
+        playerDAO.update(oldCountryName, oldJerseyNumber, newCountryName, newJerseyNumber,
+            name, position, dob);
     }
 
     private void handleDelete(HttpServletRequest req) throws SQLException {
-        int playerId = Integer.parseInt(req.getParameter("player_id"));
-        playerDAO.delete(playerId);
+        String countryName = req.getParameter("country_name");
+        int jerseyNumber = Integer.parseInt(req.getParameter("jersey_number"));
+        playerDAO.delete(countryName, jerseyNumber);
     }
 
     private String buildRedirect(HttpServletRequest req, String countryName) {
@@ -107,10 +125,5 @@ public class PlayerServlet extends HttpServlet {
             ? "?country=" + URLEncoder.encode(countryName, "UTF-8") + "&error=" + URLEncoder.encode(message, "UTF-8")
             : "?error=" + URLEncoder.encode(message, "UTF-8");
         resp.sendRedirect(base + qs);
-    }
-
-    private Integer parseIntOrNull(String value) {
-        if (value == null || value.isBlank()) return null;
-        return Integer.parseInt(value.trim());
     }
 }

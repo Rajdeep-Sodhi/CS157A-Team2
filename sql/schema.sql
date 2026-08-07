@@ -20,27 +20,29 @@ CREATE TABLE Countries (
     PRIMARY KEY (country_name)
 );
 
+-- Players is a weak entity: it can't be uniquely identified on its
+-- own, since jersey_number is only unique WITHIN a team (two
+-- different countries can both have a #10). Its key is the owner's
+-- key (country_name) plus its own partial key (jersey_number).
 CREATE TABLE Players (
-    player_id INT AUTO_INCREMENT,
     country_name VARCHAR(100) NOT NULL,
+    jersey_number INT NOT NULL,
     name VARCHAR(100) NOT NULL,
     date_of_birth DATE,
     position VARCHAR(50),
-    jersey_number INT,
-    PRIMARY KEY (player_id),
+    PRIMARY KEY (country_name, jersey_number),
     FOREIGN KEY (country_name) REFERENCES Countries(country_name)
 );
 
 CREATE TABLE PlayerStats (
     stat_id INT AUTO_INCREMENT,
-    player_id INT NOT NULL,
     country_name VARCHAR(100) NOT NULL,
+    jersey_number INT NOT NULL,
     goals INT,
     assists INT,
     minutes_played INT,
     PRIMARY KEY (stat_id),
-    FOREIGN KEY (player_id) REFERENCES Players(player_id),
-    FOREIGN KEY (country_name) REFERENCES Countries(country_name)
+    FOREIGN KEY (country_name, jersey_number) REFERENCES Players(country_name, jersey_number)
 );
 
 CREATE TABLE Referees (
@@ -89,14 +91,14 @@ CREATE TABLE MatchResults (
 CREATE TABLE MatchEvents (
     event_id INT AUTO_INCREMENT,
     match_id INT NOT NULL,
-    player_id INT NOT NULL,
     country_name VARCHAR(100) NOT NULL,
+    player_jersey_number INT,
     event_type VARCHAR(100) NOT NULL,
     minute INT,
     PRIMARY KEY (event_id),
     FOREIGN KEY (match_id) REFERENCES Matches(match_id),
-    FOREIGN KEY (player_id) REFERENCES Players(player_id),
-    FOREIGN KEY (country_name) REFERENCES Countries(country_name)
+    FOREIGN KEY (country_name) REFERENCES Countries(country_name),
+    FOREIGN KEY (country_name, player_jersey_number) REFERENCES Players(country_name, jersey_number)
 );
 
 CREATE TABLE GroupStandings (
@@ -108,14 +110,6 @@ CREATE TABLE GroupStandings (
     points INT,
     PRIMARY KEY (standing_id),
     FOREIGN KEY (country_name) REFERENCES Countries(country_name)
-);
-
-CREATE TABLE Sponsors (
-    sponsor_id INT AUTO_INCREMENT,
-    sponsor_name VARCHAR(100) NOT NULL,
-    contract_amount DECIMAL(12, 2) NOT NULL,
-    PRIMARY KEY (sponsor_id),
-    UNIQUE (sponsor_name)
 );
 
 CREATE TABLE Comments (
@@ -170,14 +164,6 @@ CREATE TABLE HostedAt (
     FOREIGN KEY (match_id) REFERENCES Matches(match_id)
 );
 
-CREATE TABLE SponsoredBy (
-    match_id INT NOT NULL,
-    sponsor_id INT NOT NULL,
-    PRIMARY KEY (match_id, sponsor_id),
-    FOREIGN KEY (match_id) REFERENCES Matches(match_id),
-    FOREIGN KEY (sponsor_id) REFERENCES Sponsors(sponsor_id)
-);
-
 CREATE TABLE Officiates (
     referee_id INT NOT NULL,
     match_id INT NOT NULL,
@@ -186,43 +172,11 @@ CREATE TABLE Officiates (
     FOREIGN KEY (match_id) REFERENCES Matches(match_id)
 );
 
-CREATE TABLE Nationality (
-    country_name VARCHAR(100) NOT NULL,
-    referee_id INT NOT NULL,
-    PRIMARY KEY (country_name, referee_id),
-    FOREIGN KEY (country_name) REFERENCES Countries(country_name),
-    FOREIGN KEY (referee_id) REFERENCES Referees(referee_id)
-);
+ALTER TABLE Matches ADD UNIQUE (venue_id, match_date);
 
--- ============================================================
--- Migration for Functional Requirements 1-4
--- (Users/roles, Team & Player management, Match management,
---  Stadium/Venue management)
--- Safe to run once against an already-created worldcup2026 DB.
--- Does NOT touch any existing rows/seed data.
--- ============================================================
-
--- Players.country_name must be nullable so that deleting a team
--- ("Country") can leave its players behind, unassigned
--- ("Not on a Team"), instead of destroying their records.
-ALTER TABLE Players MODIFY country_name VARCHAR(100) NULL;
-
--- A venue can't host two matches at the same date/time.
--- (Enforced in application code too, but backed here at the DB level.)
-ALTER TABLE Matches ADD CONSTRAINT uq_venue_datetime UNIQUE (venue_id, match_date);
-
--- The registration form collects date of birth and country
--- (per the functional requirements), but Users never had
--- columns for them. Both are optional/nullable so this doesn't
--- affect any existing seeded rows.
 ALTER TABLE Users ADD COLUMN date_of_birth DATE NULL;
 ALTER TABLE Users ADD COLUMN country VARCHAR(100) NULL;
 
--- Tracks each user's vote on each comment (1 = upvote, -1 = downvote),
--- so a user can only vote once per comment (and can change or remove
--- their vote by clicking again). Comments.upvote_count is kept as a
--- running net total so it can be displayed without summing this
--- table on every page load.
 CREATE TABLE CommentVotes (
     comment_id INT NOT NULL,
     user_id INT NOT NULL,

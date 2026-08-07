@@ -45,29 +45,9 @@ public class PredictionServlet extends HttpServlet {
         int userId = (Integer) session.getAttribute("userId");
 
         try (Connection conn = DBConnection.getConnection()) {
-            // FR literally says "predictions are locked automatically once
-            // match starts" - i.e. AND m.match_date > NOW() below. We
-            // deliberately lock on result-entry instead (this still
-            // prevents predicting an already-known outcome, which is the
-            // real risk the FR is protecting against), because the seed
-            // data's match dates (June 2026) are already in the past
-            // relative to real time - a literal kickoff-time lock would
-            // make every seeded match permanently unpredictable, with no
-            // way to test this feature without re-dating the seed data.
-            // To switch to the literal FR behavior, change this query to:
-            //   "SELECT 1 FROM Matches m " +
-            //   "LEFT JOIN MatchResults mr ON mr.match_id = m.match_id " +
-            //   "WHERE m.match_id = ? AND mr.result_id IS NULL AND m.match_date > NOW()"
-            //
-            // A verified, working version with this change already applied
-            // (both here and in predictions.jsp) is saved in
-            // /matchuptodatereference - it was test-built and confirmed
-            // working against a future-dated match, just not kept active
-            // by default because of the seed-data conflict above.
             String upcomingSql =
                 "SELECT 1 FROM Matches m " +
-                "LEFT JOIN MatchResults mr ON mr.match_id = m.match_id " +
-                "WHERE m.match_id = ? AND mr.result_id IS NULL";
+                "WHERE m.match_id = ? AND m.match_id NOT IN (SELECT match_id FROM MatchResults)";
             try (PreparedStatement check = conn.prepareStatement(upcomingSql)) {
                 check.setInt(1, matchId);
                 try (ResultSet rs = check.executeQuery()) {

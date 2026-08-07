@@ -31,10 +31,9 @@ public class CommentDAO {
         String sql =
             "SELECT c.comment_id, c.user_id, c.match_id, c.content, c.upvote_count, c.is_flagged, " +
             "       c.flag_reason, c.flagged_at, c.created_at, u.name AS commenter_name, " +
-            "       reporter.name AS reporter_name " +
+            "       (SELECT reporter.name FROM Users reporter WHERE reporter.user_id = c.flagged_by_user_id) AS reporter_name " +
             "FROM Comments c " +
             "JOIN Users u ON c.user_id = u.user_id " +
-            "LEFT JOIN Users reporter ON c.flagged_by_user_id = reporter.user_id " +
             "WHERE c.match_id IN (" + placeholders + ") " +
             "ORDER BY c.created_at ASC";
 

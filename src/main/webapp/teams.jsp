@@ -107,18 +107,20 @@
                 <table class="data-table">
                     <thead><tr><th>#</th><th>Name</th><th>Position</th><th>DOB</th><% if (isAdmin) { %><th></th><% } %></tr></thead>
                     <tbody>
-                    <% if (roster != null) { for (Map<String,Object> p : roster) { %>
+                    <% if (roster != null) { for (Map<String,Object> p : roster) {
+                        int jerseyNum = (Integer) p.get("jersey_number"); %>
                         <tr>
-                            <td><%= p.get("jersey_number") == null ? "-" : p.get("jersey_number") %></td>
+                            <td><%= jerseyNum %></td>
                             <td class="team-name"><%= p.get("name") %></td>
                             <td><%= p.get("position") == null ? "-" : p.get("position") %></td>
                             <td><%= p.get("date_of_birth") == null ? "-" : p.get("date_of_birth") %></td>
                             <% if (isAdmin) { %>
                             <td class="action-row">
-                                <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('player-edit-<%= p.get("player_id") %>').classList.toggle('hidden-form')">Edit</button>
+                                <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('player-edit-<%= jerseyNum %>').classList.toggle('hidden-form')">Edit</button>
                                 <form method="post" action="<%= ctx %>/players" style="display:inline">
                                     <input type="hidden" name="action" value="delete">
-                                    <input type="hidden" name="player_id" value="<%= p.get("player_id") %>">
+                                    <input type="hidden" name="country_name" value="<%= selectedCountry %>">
+                                    <input type="hidden" name="jersey_number" value="<%= jerseyNum %>">
                                     <input type="hidden" name="return_country" value="<%= selectedCountryUrl %>">
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Remove this player?');">Delete</button>
                                 </form>
@@ -126,11 +128,12 @@
                             <% } %>
                         </tr>
                         <% if (isAdmin) { %>
-                        <tr id="player-edit-<%= p.get("player_id") %>" class="hidden-form">
+                        <tr id="player-edit-<%= jerseyNum %>" class="hidden-form">
                             <td colspan="5">
                                 <form method="post" action="<%= ctx %>/players" class="form-grid" style="padding:.75rem 0;">
                                     <input type="hidden" name="action" value="edit">
-                                    <input type="hidden" name="player_id" value="<%= p.get("player_id") %>">
+                                    <input type="hidden" name="old_country_name" value="<%= selectedCountry %>">
+                                    <input type="hidden" name="old_jersey_number" value="<%= jerseyNum %>">
                                     <input type="hidden" name="country_name" value="<%= selectedCountry %>">
                                     <input type="hidden" name="return_country" value="<%= selectedCountryUrl %>">
                                     <div class="form-field">
@@ -148,8 +151,8 @@
                                     </div>
                                     <div class="form-field">
                                         <label>Jersey Number</label>
-                                        <input type="number" name="jersey_number" min="1" max="99"
-                                               value="<%= p.get("jersey_number") == null ? "" : p.get("jersey_number") %>">
+                                        <input type="number" name="jersey_number" min="1" max="99" required
+                                               value="<%= jerseyNum %>">
                                     </div>
                                     <div class="form-field">
                                         <label>Date of Birth</label>
@@ -193,7 +196,7 @@
                         </div>
                         <div class="form-field">
                             <label for="p_jersey">Jersey Number</label>
-                            <input type="number" id="p_jersey" name="jersey_number" min="1" max="99">
+                            <input type="number" id="p_jersey" name="jersey_number" min="1" max="99" required>
                         </div>
                         <div class="form-field">
                             <label for="p_dob">Date of Birth</label>

@@ -138,13 +138,7 @@ public class TeamDAO {
     }
 
     /**
-     * Deletes a team (Countries row) AND its players outright - not
-     * unassigned, actually removed, along with their PlayerStats and
-     * MatchEvents records (both have NOT NULL foreign keys to
-     * player_id, so those must go first or the delete fails).
-     * Fails with a friendly message if the team still has matches
-     * scheduled, or is set as a venue's host country - both must be
-     * resolved first.
+     * Deletes a team (Countries row) AND its players.
      */
     public void delete(String countryName) throws SQLException, IllegalStateException {
         try (Connection conn = DBConnection.getConnection()) {
@@ -175,26 +169,19 @@ public class TeamDAO {
                     }
                 }
 
-                List<Integer> playerIds = new ArrayList<>();
-                try (PreparedStatement getPlayers = conn.prepareStatement(
-                        "SELECT player_id FROM Players WHERE country_name = ?")) {
-                    getPlayers.setString(1, countryName);
-                    try (ResultSet rs = getPlayers.executeQuery()) {
-                        while (rs.next()) playerIds.add(rs.getInt("player_id"));
-                    }
+                // PlayerStats/MatchEvents both carry country_name as part
+                // of their foreign key to Players, so these can be cleaned
+                // up directly per-team - no need to look up individual
+                // players first.
+                try (PreparedStatement delStats = conn.prepareStatement(
+                        "DELETE FROM PlayerStats WHERE country_name = ?")) {
+                    delStats.setString(1, countryName);
+                    delStats.executeUpdate();
                 }
-
-                for (int playerId : playerIds) {
-                    try (PreparedStatement delStats = conn.prepareStatement(
-                            "DELETE FROM PlayerStats WHERE player_id = ?")) {
-                        delStats.setInt(1, playerId);
-                        delStats.executeUpdate();
-                    }
-                    try (PreparedStatement delEvents = conn.prepareStatement(
-                            "DELETE FROM MatchEvents WHERE player_id = ?")) {
-                        delEvents.setInt(1, playerId);
-                        delEvents.executeUpdate();
-                    }
+                try (PreparedStatement delEvents = conn.prepareStatement(
+                        "DELETE FROM MatchEvents WHERE country_name = ?")) {
+                    delEvents.setString(1, countryName);
+                    delEvents.executeUpdate();
                 }
 
                 try (PreparedStatement deletePlayers = conn.prepareStatement(

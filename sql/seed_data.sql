@@ -6,7 +6,15 @@ INSERT INTO Users (email, name, password_hash, role) VALUES
 ('rajdeep.sodhi@sjsu.edu', 'Rajdeep', 'password', 'admin'),
 ('anthony.moll@sjsu.edu', 'Anthony', 'password', 'admin'),
 ('thingocduyen.lam@sjsu.edu', 'Thi', 'password', 'admin'),
-('mike.wu@sjsu.edu', 'Mike', 'password', 'fan');
+('mike.wu@sjsu.edu', 'Mike', 'password', 'fan'),
+('sarah.kim@sjsu.edu', 'Sarah', 'password', 'fan'),
+('david.chen@sjsu.edu', 'David', 'password', 'fan'),
+('maria.garcia@sjsu.edu', 'Maria', 'password', 'fan'),
+('james.wilson@sjsu.edu', 'James', 'password', 'fan'),
+('emily.brown@sjsu.edu', 'Emily', 'password', 'fan'),
+('carlos.rodriguez@sjsu.edu', 'Carlos', 'password', 'fan'),
+('linda.martinez@sjsu.edu', 'Linda', 'password', 'fan'),
+('kevin.lee@sjsu.edu', 'Kevin', 'password', 'fan');
 
 
 INSERT INTO Countries (country_name, fifa_ranking, confederation, coach_name, group_letter) VALUES
@@ -137,75 +145,75 @@ INSERT INTO Venues (stadium_name, city, host_country, capacity) VALUES
 ('Seattle Stadium', 'Seattle', 'United States', NULL);
 
 INSERT INTO Players
-    (country_name, name, date_of_birth, position, jersey_number)
+    (country_name, jersey_number, name, date_of_birth, position)
 VALUES
 -- Argentina
-('Argentina', 'Lionel Messi', '1987-06-24', 'Forward', NULL),
+('Argentina', 10, 'Lionel Messi', '1987-06-24', 'Forward'),
 
 -- Portugal
-('Portugal', 'Cristiano Ronaldo', '1985-02-05', 'Forward', NULL),
-('Portugal', 'Bruno Fernandes', '1994-09-08', 'Midfielder', NULL),
+('Portugal', 7, 'Cristiano Ronaldo', '1985-02-05', 'Forward'),
+('Portugal', 8, 'Bruno Fernandes', '1994-09-08', 'Midfielder'),
 
 -- France
-('France', 'Kylian Mbappe', '1998-12-20', 'Forward', NULL),
-('France', 'Ousmane Dembele', '1997-05-15', 'Forward', NULL),
+('France', 10, 'Kylian Mbappe', '1998-12-20', 'Forward'),
+('France', 7, 'Ousmane Dembele', '1997-05-15', 'Forward'),
 
 -- Norway
-('Norway', 'Erling Haaland', '2000-07-21', 'Forward', NULL),
+('Norway', 9, 'Erling Haaland', '2000-07-21', 'Forward'),
 
 -- Spain
-('Spain', 'Lamine Yamal', '2007-07-13', 'Forward', NULL),
-('Spain', 'Rodri', '1996-06-22', 'Midfielder', NULL),
-('Spain', 'Pedri', '2002-11-25', 'Midfielder', NULL),
+('Spain', 19, 'Lamine Yamal', '2007-07-13', 'Forward'),
+('Spain', 16, 'Rodri', '1996-06-22', 'Midfielder'),
+('Spain', 8, 'Pedri', '2002-11-25', 'Midfielder'),
 
 -- Brazil
-('Brazil', 'Vinicius Junior', '2000-07-12', 'Forward', NULL),
-('Brazil', 'Raphinha', '1996-12-14', 'Forward', NULL),
+('Brazil', 7, 'Vinicius Junior', '2000-07-12', 'Forward'),
+('Brazil', 11, 'Raphinha', '1996-12-14', 'Forward'),
 
 -- England
-('England', 'Jude Bellingham', '2003-06-29', 'Midfielder', NULL),
-('England', 'Harry Kane', '1993-07-28', 'Forward', NULL),
-('England', 'Bukayo Saka', '2001-09-05', 'Forward', NULL),
+('England', 10, 'Jude Bellingham', '2003-06-29', 'Midfielder'),
+('England', 9, 'Harry Kane', '1993-07-28', 'Forward'),
+('England', 7, 'Bukayo Saka', '2001-09-05', 'Forward'),
 
 -- Egypt
-('Egypt', 'Mohamed Salah', '1992-06-15', 'Forward', NULL),
+('Egypt', 11, 'Mohamed Salah', '1992-06-15', 'Forward'),
 
 -- United States
-('United States', 'Christian Pulisic', '1998-09-18', 'Forward', NULL),
+('United States', 10, 'Christian Pulisic', '1998-09-18', 'Forward'),
 
 -- South Korea
-('South Korea', 'Son Heung-min', '1992-07-08', 'Forward', NULL),
+('South Korea', 7, 'Son Heung-min', '1992-07-08', 'Forward'),
 
 -- Croatia
-('Croatia', 'Luka Modric', '1985-09-09', 'Midfielder', NULL),
+('Croatia', 10, 'Luka Modric', '1985-09-09', 'Midfielder'),
 
 -- Belgium
-('Belgium', 'Kevin De Bruyne', '1991-06-28', 'Midfielder', NULL),
-('Belgium', 'Romelu Lukaku', '1993-05-13', 'Forward', NULL),
+('Belgium', 7, 'Kevin De Bruyne', '1991-06-28', 'Midfielder'),
+('Belgium', 9, 'Romelu Lukaku', '1993-05-13', 'Forward'),
 
 -- Colombia
-('Colombia', 'Luis Diaz', '1997-01-13', 'Forward', NULL),
-('Colombia', 'James Rodriguez', '1991-07-12', 'Midfielder', NULL),
+('Colombia', 7, 'Luis Diaz', '1997-01-13', 'Forward'),
+('Colombia', 10, 'James Rodriguez', '1991-07-12', 'Midfielder'),
 
 -- Uruguay
-('Uruguay', 'Federico Valverde', '1998-07-22', 'Midfielder', NULL),
+('Uruguay', 15, 'Federico Valverde', '1998-07-22', 'Midfielder'),
 
 -- Germany
-('Germany', 'Jamal Musiala', '2003-02-26', 'Midfielder', NULL),
-('Germany', 'Florian Wirtz', '2003-05-03', 'Midfielder', NULL),
+('Germany', 14, 'Jamal Musiala', '2003-02-26', 'Midfielder'),
+('Germany', 17, 'Florian Wirtz', '2003-05-03', 'Midfielder'),
 
 -- Morocco
-('Morocco', 'Achraf Hakimi', '1998-11-04', 'Defender', NULL),
+('Morocco', 2, 'Achraf Hakimi', '1998-11-04', 'Defender'),
 
 -- Canada
-('Canada', 'Alphonso Davies', '2000-11-02', 'Defender', NULL),
-('Canada', 'Jonathan David', '2000-01-14', 'Forward', NULL),
+('Canada', 19, 'Alphonso Davies', '2000-11-02', 'Defender'),
+('Canada', 20, 'Jonathan David', '2000-01-14', 'Forward'),
 
 -- Algeria
-('Algeria', 'Riyad Mahrez', '1991-02-21', 'Forward', NULL),
+('Algeria', 7, 'Riyad Mahrez', '1991-02-21', 'Forward'),
 
 -- Mexico
-('Mexico', 'Guillermo Ochoa', '1985-07-13', 'Goalkeeper', NULL);
+('Mexico', 13, 'Guillermo Ochoa', '1985-07-13', 'Goalkeeper');
 
 
 -- Match 1: Mexico 2-0 South Africa
@@ -647,9 +655,7 @@ VALUES (
 SET @match_15 = LAST_INSERT_ID();
 
 
--- =========================================================
 -- RELATIONSHIP TABLES
--- =========================================================
 
 INSERT INTO PlaysAsTeam1 (match_id, country_name) VALUES
 (@match_1, 'Mexico'),
@@ -782,3 +788,101 @@ VALUES
 ('Croatia', 0, 0, 1, 0),
 ('Ghana', 0, 0, 0, 0),
 ('Panama', 0, 0, 0, 0);
+
+
+-- ADDITIONAL SEED DATA 
+
+-- PlayerStats: (country_name, jersey_number) identifies the player directly now.
+INSERT INTO PlayerStats (country_name, jersey_number, goals, assists, minutes_played) VALUES
+('Argentina', 10, 1, 1, 90),
+('France', 10, 2, 0, 90),
+('France', 7, 1, 1, 85),
+('Spain', 19, 0, 0, 90),
+('Brazil', 7, 1, 0, 90),
+('England', 10, 1, 1, 90),
+('England', 9, 2, 0, 90),
+('United States', 10, 1, 1, 90),
+('South Korea', 7, 1, 0, 90),
+('Croatia', 10, 0, 1, 90),
+('Germany', 14, 2, 2, 80),
+('Morocco', 2, 0, 1, 90);
+
+INSERT INTO MatchEvents (match_id, country_name, player_jersey_number, event_type, minute) VALUES
+(@match_9, 'Argentina', 10, 'Goal', 23),
+(@match_8, 'France', 10, 'Goal', 15),
+(@match_8, 'France', 10, 'Goal', 67),
+(@match_8, 'France', 7, 'Assist', 15),
+(@match_10, 'England', 10, 'Goal', 34),
+(@match_10, 'England', 9, 'Goal', 12),
+(@match_10, 'England', 9, 'Goal', 78),
+(@match_4, 'United States', 10, 'Goal', 55),
+(@match_2, 'South Korea', 7, 'Goal', 41),
+(@match_6, 'Germany', 14, 'Goal', 20),
+(@match_6, 'Germany', 14, 'Goal', 60),
+(@match_5, 'Morocco', 2, 'Assist', 30);
+
+-- Comments
+INSERT INTO Comments (user_id, match_id, content) VALUES
+(1, @match_1, 'Great start for Mexico!'),
+(2, @match_1, 'Solid defense from South Africa despite the loss.'),
+(3, @match_2, 'Son was electric today.'),
+(4, @match_3, 'Exciting draw, both teams played well.'),
+(5, @match_4, 'Pulisic finally showing up on the big stage.'),
+(6, @match_5, 'Brazil looked flat in this one.'),
+(7, @match_6, 'Germany absolutely dominant, 7 goals!'),
+(8, @match_7, 'Boring 0-0 but tactically interesting.'),
+(9, @match_8, 'Mbappe is unstoppable.'),
+(10, @match_9, 'Messi magic once again.'),
+(11, @match_10, 'England front three is scary good.'),
+(1, @match_10, 'Croatia gave it their all.');
+
+SET @comment_1 = (SELECT comment_id FROM Comments WHERE user_id = 1 AND match_id = @match_1 LIMIT 1);
+SET @comment_2 = (SELECT comment_id FROM Comments WHERE user_id = 2 AND match_id = @match_1 LIMIT 1);
+SET @comment_3 = (SELECT comment_id FROM Comments WHERE user_id = 3 AND match_id = @match_2 LIMIT 1);
+SET @comment_4 = (SELECT comment_id FROM Comments WHERE user_id = 4 AND match_id = @match_3 LIMIT 1);
+SET @comment_5 = (SELECT comment_id FROM Comments WHERE user_id = 5 AND match_id = @match_4 LIMIT 1);
+SET @comment_6 = (SELECT comment_id FROM Comments WHERE user_id = 6 AND match_id = @match_5 LIMIT 1);
+
+-- CommentVotes: (comment_id, user_id) must be unique, so no voter
+-- votes on the same comment twice.
+INSERT INTO CommentVotes (comment_id, user_id, vote_value) VALUES
+(@comment_1, 2, 1),
+(@comment_1, 3, 1),
+(@comment_1, 4, -1),
+(@comment_2, 1, 1),
+(@comment_2, 5, 1),
+(@comment_3, 6, 1),
+(@comment_3, 7, -1),
+(@comment_4, 8, 1),
+(@comment_5, 9, 1),
+(@comment_6, 10, 1),
+(@comment_6, 11, 1);
+
+-- Predictions: predictions on the still-unplayed matches (11-15).
+INSERT INTO Predictions (user_id, match_id, predicted_team1_score, predicted_team2_score) VALUES
+(1, @match_11, 1, 0),
+(2, @match_11, 2, 1),
+(3, @match_12, 1, 1),
+(4, @match_12, 2, 0),
+(5, @match_13, 3, 0),
+(6, @match_13, 2, 1),
+(7, @match_14, 2, 0),
+(8, @match_14, 3, 1),
+(9, @match_15, 1, 1),
+(10, @match_15, 2, 0),
+(11, @match_11, 0, 0),
+(12, @match_12, 1, 0);
+
+-- Officiates: referee_id refers to the Referees insert order above.
+-- Chosen so no referee's own country is one of the two teams playing.
+INSERT INTO Officiates (referee_id, match_id) VALUES
+(3, @match_1),   -- Japan referees Mexico vs South Africa
+(4, @match_2),   -- Somalia referees South Korea vs Czechia
+(9, @match_3),   -- Costa Rica referees Canada vs Bosnia and Herzegovina
+(12, @match_4),  -- Norway referees United States vs Paraguay
+(22, @match_5),  -- New Zealand referees Brazil vs Morocco
+(23, @match_6),  -- Romania referees Germany vs Curacao
+(25, @match_7),  -- China referees Spain vs Cabo Verde
+(26, @match_8),  -- Jordan referees France vs Senegal
+(27, @match_9),  -- Netherlands referees Argentina vs Algeria
+(28, @match_10); -- Poland referees England vs Croatia

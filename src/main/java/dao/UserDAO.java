@@ -36,10 +36,8 @@ public class UserDAO {
     public List<User> listAll() throws SQLException {
         String sql =
             "SELECT u.user_id, u.name, u.email, u.role, u.is_banned, " +
-            "       COUNT(c.comment_id) AS flagged_comment_count " +
+            "       (SELECT COUNT(*) FROM Comments c WHERE c.user_id = u.user_id AND c.is_flagged = TRUE) AS flagged_comment_count " +
             "FROM Users u " +
-            "LEFT JOIN Comments c ON c.user_id = u.user_id AND c.is_flagged = TRUE " +
-            "GROUP BY u.user_id, u.name, u.email, u.role, u.is_banned " +
             "ORDER BY u.role = 'admin' DESC, u.name ASC, u.email ASC";
         List<User> users = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();

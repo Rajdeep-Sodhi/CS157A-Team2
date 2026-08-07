@@ -32,14 +32,17 @@
             String matchSql =
                 "SELECT m.match_id, m.match_date, m.stage, " +
                 "m.team1_country_name AS team1, m.team2_country_name AS team2, " +
-                "v.stadium_name, v.city, p.predicted_team1_score, p.predicted_team2_score " +
+                "v.stadium_name, v.city, " +
+                "(SELECT p.predicted_team1_score FROM Predictions p WHERE p.match_id = m.match_id AND p.user_id = ?) AS predicted_team1_score, " +
+                "(SELECT p.predicted_team2_score FROM Predictions p WHERE p.match_id = m.match_id AND p.user_id = ?) AS predicted_team2_score " +
                 "FROM Matches m " +
                 "JOIN Venues v ON m.venue_id = v.venue_id " +
-                "LEFT JOIN MatchResults mr ON mr.match_id = m.match_id " +
-                "LEFT JOIN Predictions p ON p.match_id = m.match_id AND p.user_id = ? " +
-                "WHERE mr.result_id IS NULL ORDER BY m.match_date ASC";
+                "WHERE m.match_id NOT IN (SELECT match_id FROM MatchResults) " +
+                "ORDER BY m.match_date ASC";
             try (PreparedStatement ps = conn.prepareStatement(matchSql)) {
-                ps.setInt(1, predictionUserId == null ? -1 : predictionUserId);
+                int uid = predictionUserId == null ? -1 : predictionUserId;
+                ps.setInt(1, uid);
+                ps.setInt(2, uid);
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         Map<String,Object> match = new LinkedHashMap<>();
@@ -62,8 +65,8 @@
                 "p.predicted_team1_score, p.predicted_team2_score " +
                 "FROM Predictions p JOIN Users u ON u.user_id = p.user_id " +
                 "JOIN Matches m ON m.match_id = p.match_id " +
-                "LEFT JOIN MatchResults mr ON mr.match_id = m.match_id " +
-                "WHERE mr.result_id IS NULL ORDER BY u.name ASC";
+                "WHERE m.match_id NOT IN (SELECT match_id FROM MatchResults) " +
+                "ORDER BY u.name ASC";
             try (PreparedStatement ps = conn.prepareStatement(communitySql);
                  ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -122,32 +125,53 @@
             // GroupStandings), so it can never drift out of sync - no separate
             // points column to keep updated. Scoring matches the per-match
             // grading shown above: 3 points for an exact score match, 1 point
-            // if exactly one side matches, 0 otherwise.
+            // if exactly one side matches, 0 otherwise. The scoring itself is
+            // done in Java below (not SQL CASE WHEN) - same hybrid pattern
+            // already used for standings recalculation.
             String leaderboardSql =
                 "SELECT u.user_id, u.name, " +
-                "  SUM(CASE " +
-                "        WHEN p.predicted_team1_score = mr.team1_score AND p.predicted_team2_score = mr.team2_score THEN 3 " +
-                "        WHEN p.predicted_team1_score = mr.team1_score OR p.predicted_team2_score = mr.team2_score THEN 1 " +
-                "        ELSE 0 END) AS total_points, " +
-                "  COUNT(*) AS predictions_graded " +
+                "p.predicted_team1_score, p.predicted_team2_score, " +
+                "mr.team1_score, mr.team2_score " +
                 "FROM Predictions p " +
                 "JOIN Users u ON u.user_id = p.user_id " +
                 "JOIN MatchResults mr ON mr.result_id = " +
                 "  (SELECT MAX(latest.result_id) FROM MatchResults latest WHERE latest.match_id = p.match_id) " +
                 "WHERE mr.team1_score IS NOT NULL AND mr.team2_score IS NOT NULL " +
-                "GROUP BY u.user_id, u.name " +
-                "ORDER BY total_points DESC, u.name ASC";
+                "ORDER BY u.name ASC";
+            Map<Integer,Map<String,Object>> leaderboardByUser = new LinkedHashMap<>();
             try (PreparedStatement ps = conn.prepareStatement(leaderboardSql);
                  ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Map<String,Object> row = new LinkedHashMap<>();
-                    row.put("user_id", rs.getInt("user_id"));
-                    row.put("name", rs.getString("name"));
-                    row.put("total_points", rs.getInt("total_points"));
-                    row.put("predictions_graded", rs.getInt("predictions_graded"));
-                    leaderboard.add(row);
+                    int userId = rs.getInt("user_id");
+                    int predT1 = rs.getInt("predicted_team1_score");
+                    int predT2 = rs.getInt("predicted_team2_score");
+                    int actualT1 = rs.getInt("team1_score");
+                    int actualT2 = rs.getInt("team2_score");
+
+                    int points;
+                    if (predT1 == actualT1 && predT2 == actualT2) points = 3;
+                    else if (predT1 == actualT1 || predT2 == actualT2) points = 1;
+                    else points = 0;
+
+                    Map<String,Object> row = leaderboardByUser.get(userId);
+                    if (row == null) {
+                        row = new LinkedHashMap<>();
+                        row.put("user_id", userId);
+                        row.put("name", rs.getString("name"));
+                        row.put("total_points", 0);
+                        row.put("predictions_graded", 0);
+                        leaderboardByUser.put(userId, row);
+                    }
+                    row.put("total_points", (Integer) row.get("total_points") + points);
+                    row.put("predictions_graded", (Integer) row.get("predictions_graded") + 1);
                 }
             }
+            leaderboard.addAll(leaderboardByUser.values());
+            leaderboard.sort((a, b) -> {
+                int byPoints = (Integer) b.get("total_points") - (Integer) a.get("total_points");
+                if (byPoints != 0) return byPoints;
+                return ((String) a.get("name")).compareTo((String) b.get("name"));
+            });
         } catch (SQLException e) {
             predictionError = e.getMessage();
         }

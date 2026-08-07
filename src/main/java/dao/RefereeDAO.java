@@ -198,9 +198,9 @@ public class RefereeDAO
 
         String sql = "SELECT m.match_id, m.match_date, " +
                      "m.team1_country_name, m.team2_country_name, " +
-                     "m.referee_id, r.name AS referee_name " +
+                     "m.referee_id, " +
+                     "(SELECT r.name FROM Referees r WHERE r.referee_id = m.referee_id) AS referee_name " +
                      "FROM Matches m " +
-                     "LEFT JOIN Referees r ON r.referee_id = m.referee_id " +
                      "ORDER BY m.match_date ASC";
 
         try
