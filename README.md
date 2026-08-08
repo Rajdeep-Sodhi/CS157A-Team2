@@ -13,23 +13,38 @@ Before setting this up, you will need the following installed:
 
 ## 1. Set up the database
 
-Create the database and load the schema and seed data:
+`schema.sql` already contains `CREATE DATABASE worldcup2026;` and `USE worldcup2026;` at the top, so don't create the database yourself first — just point mysql at the file directly:
 
 ```
-mysql -u root -p -e "CREATE DATABASE worldcup2026;"
-mysql -u root -p worldcup2026 < sql/schema.sql
+mysql -u root -p < sql/schema.sql
 mysql -u root -p worldcup2026 < sql/seed_data.sql
 ```
 
-`schema.sql` includes a short migration section near the bottom of the file (a few `ALTER TABLE` statements). These are safe to run even if you already have the tables created, since the `CREATE TABLE` statements above them use `IF NOT EXISTS`.
+`schema.sql` includes a short migration section near the bottom of the file (a few `ALTER TABLE` statements).
+
+Note: none of the `CREATE TABLE` statements use `IF NOT EXISTS`, so re-running `schema.sql` on a database that already has these tables will fail with "table already exists" errors. If you need to reset and reload, drop and recreate the database first:
+
+```
+mysql -u root -p -e "DROP DATABASE worldcup2026;"
+mysql -u root -p < sql/schema.sql
+mysql -u root -p worldcup2026 < sql/seed_data.sql
+```
 
 ## 2. Configure the database connection
 
-Open `src/main/java/dao/DBConnection.java` and update the password field to match your local MySQL root password:
+Open `src/main/java/dao/DBConnection.java` and replace the placeholder password with your local MySQL root password:
 
 ```java
-private static final String DB_PASSWORD = "your_mysql_password_here";
+private static final String DB_PASSWORD = "FILLERPASSWORD"; //*******CHANGE THIS********
 ```
+
+Since everyone on the team has a different local MySQL password, this line will keep getting overwritten back to `FILLERPASSWORD` every time you `git pull` (whoever last committed had it set to their own password, or reset it before committing). Rather than editing it by hand every time, you can just run:
+
+```
+sed -i '' 's/DB_PASSWORD = ".*"/DB_PASSWORD = "your_mysql_password_here"/' src/main/java/dao/DBConnection.java
+```
+
+(drop the empty `''` after `-i` if you're on Linux instead of macOS). Do this after every `git pull` before compiling.
 
 The database URL and username can be left as-is unless your MySQL setup differs from the default (`localhost:3306`, user `root`).
 
