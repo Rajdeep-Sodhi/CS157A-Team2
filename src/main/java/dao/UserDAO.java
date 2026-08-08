@@ -203,10 +203,22 @@ public class UserDAO {
                     clearFlags.executeUpdate();
                 }
 
+                try (PreparedStatement deleteVotesCast = conn.prepareStatement(
+                        "DELETE FROM CommentVotes WHERE user_id = ?")) {
+                    deleteVotesCast.setInt(1, userId);
+                    deleteVotesCast.executeUpdate();
+                }
+
                 try (PreparedStatement deletePredictions = conn.prepareStatement(
                         "DELETE FROM Predictions WHERE user_id = ?")) {
                     deletePredictions.setInt(1, userId);
                     deletePredictions.executeUpdate();
+                }
+
+                try (PreparedStatement deleteVotesReceived = conn.prepareStatement(
+                        "DELETE FROM CommentVotes WHERE comment_id IN (SELECT comment_id FROM Comments WHERE user_id = ?)")) {
+                    deleteVotesReceived.setInt(1, userId);
+                    deleteVotesReceived.executeUpdate();
                 }
 
                 try (PreparedStatement deleteComments = conn.prepareStatement(
