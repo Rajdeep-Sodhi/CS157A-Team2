@@ -264,10 +264,10 @@ public class MatchDAO {
                 deleteFrom(conn, "MatchResults", matchId);
                 deleteFrom(conn, "Predictions", matchId);
                 deleteFrom(conn, "Comments", matchId);
-                deleteFrom(conn, "SponsoredBy", matchId);
                 deleteFrom(conn, "PlaysAsTeam1", matchId);
                 deleteFrom(conn, "PlaysAsTeam2", matchId);
                 deleteFrom(conn, "HostedAt", matchId);
+                deleteFrom(conn, "Officiates", matchId);
                 try (PreparedStatement ps = conn.prepareStatement("DELETE FROM Matches WHERE match_id = ?")) {
                     ps.setInt(1, matchId);
                     ps.executeUpdate();
